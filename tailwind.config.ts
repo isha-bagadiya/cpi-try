@@ -15,7 +15,7 @@ const config: Config = {
         'custom': '0px 4.65px 3.84px 0px rgba(0, 0, 0, 0.1)', // Add custom shadow
       },
       fontSize: {
-        '10xl': ['11rem', {
+        '10xl': ['9rem', {
           lineHeight: '12rem',
           letterSpacing: '-0.05em',
           fontWeight: '600',
