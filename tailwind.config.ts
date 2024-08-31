@@ -8,6 +8,24 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      minHeight: {
+        'hero-height': 'calc(100vh - 8rem)',
+      },
+      dropShadow: {
+        'custom': '0px 4.65px 3.84px 0px rgba(0, 0, 0, 0.1)', // Add custom shadow
+      },
+      fontSize: {
+        '10xl': ['11rem', {
+          lineHeight: '12rem',
+          letterSpacing: '-0.05em',
+          fontWeight: '600',
+        }],
+        '8xl': ['8rem', {
+          lineHeight: '10rem',
+          letterSpacing: '-0.05em',
+          fontWeight: '600',
+        }],
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-aave":"linear-gradient(90deg, #2EBAC6, #B6509E)",
@@ -19,6 +37,7 @@ const config: Config = {
         "optimism":"#FF0420",
         "compound":"#00D395",
         "uniswap":"#FF007A",
+        "dark-gray":"#0E100F"
       },
       fontFamily: {
         redhat: ['var(--font-red-hat)'],

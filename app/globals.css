@@ -83,6 +83,16 @@ body {
   transform: translate(2px, 2px);
 }
 
+.button-50.heroarrowbtn {
+  background: #ff4100;
+  height: max-content;
+  text-transform: capitalize;
+  padding: 10px 10px;
+  margin-right: 50px;
+}
+.button-50.heroarrowbtn > img {
+  margin-left: 20px;
+}
 .paginationBtn {
   border: 1px solid black;
   padding: 5px;
@@ -181,4 +191,20 @@ body {
   .paginationBtn.active {
     padding: 1px;
   }
+}
+
+body::-webkit-scrollbar {
+  width: 8px; /* width of the entire scrollbar */
+  height: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: #0e100f;
+  border-radius: 20px;
+  overflow: hidden; /* color of the tracking area */
+}
+body::-webkit-scrollbar-thumb {
+  background-color: #ddd; /* color of the scroll thumb */
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 0px solid #ddd; /* creates padding around scroll thumb */
 }
