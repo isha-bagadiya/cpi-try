@@ -1,5 +1,6 @@
 export interface DelegateData {
     delegate: string;
+    ens_name:string;
     voting_power: string;
     th_vp:string;
     ch_member_r3?: string;
