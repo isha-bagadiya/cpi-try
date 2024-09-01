@@ -7,7 +7,7 @@ const HeaderImage = dynamic(() => import('./HeaderImage'), { ssr: false });
 
 const Header = () => {
     return (
-        <nav className="relative shadow-md h-[150px] bg-dark-gray">
+        <nav className="relative h-[150px] bg-dark-gray">
             <div className="mx-auto px-4">
                 <div className="flex justify-between items-center h-30 overflow-visible">
                     <div className="flex-shrink-0 flex items-center">

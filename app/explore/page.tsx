@@ -1,5 +1,6 @@
 import DataTable from "@/components/common/DataTable";
 import FilterButtons from "@/components/common/FilterButtons";
+import Header from "@/components/layout/Header";
 import { getItem, getItemCompound, getItemsAave, getItemsUniswap } from "@/lib/utils/fetchDataOnServer";
 import { Suspense } from "react";
 
@@ -30,7 +31,8 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
     }
 
     return <>
-        <div className="container mx-auto my-4 flex flex-col">
+        <Header />
+        <div className="container mx-auto mb-4 flex flex-col bg-dark-gray">
             <h1 className="font-mori font-semibold text-[#fffce1] text-3xl md:text-5xl lg:text-7xl tracking-tight text-center my-6 md:my-12">All Delegates</h1>
             <FilterButtons />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 m-4 md:gap-8 md:m-8 min-h-[100vh]">
