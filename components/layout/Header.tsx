@@ -7,8 +7,8 @@ const HeaderImage = dynamic(() => import('./HeaderImage'), { ssr: false });
 
 const Header = () => {
     return (
-        <nav className="relative h-[150px] bg-dark-gray">
-            <div className="mx-auto px-4">
+        <nav className="relative min-h-[100px] md:min-h-[150px] bg-dark-gray">
+            <div className="px-4">
                 <div className="flex justify-between items-center h-30 overflow-visible">
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/">
@@ -17,7 +17,7 @@ const Header = () => {
                                 alt="Logo"
                                 width={300}
                                 height={50}
-                                className="cursor-pointer"
+                                className="cursor-pointer w-[200px] md:w-[300px] "
                             />
                         </Link>
                     </div>

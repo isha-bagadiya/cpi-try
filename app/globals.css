@@ -37,7 +37,6 @@ body {
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  margin: 0 5px 10px 0;
   overflow: visible;
   text-align: center;
   text-transform: uppercase;
@@ -88,7 +87,8 @@ body {
   height: max-content;
   text-transform: capitalize;
   padding: 10px 10px;
-  margin-right: 50px;
+  letter-spacing: normal;
+  display: flex;
 }
 .button-50.heroarrowbtn > img {
   margin-left: 20px;

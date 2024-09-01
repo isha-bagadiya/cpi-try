@@ -14,7 +14,7 @@ const HeaderImage = () => {
     }
 
     return (
-        <div className="absolute z-20 top-0 right-0">
+        <div className="absolute z-20 top-0 right-0 w-[40%] md:w-[40%] flex justify-end items-center">
             <Image
                 src={hero1}
                 alt="Hero background"
