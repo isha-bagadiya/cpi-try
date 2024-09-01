@@ -115,7 +115,7 @@ const DataTable: React.FC<InitialDataProps> = ({ initialData, member, background
             <div className={`p-[20px] md:p-[30px] h-[100px] rounded-t-[20px] w-full flex justify-between items-center ${background} ${platform === "compound" ? "text-black" : "text-white"}`}>
                 <span className='font-bold  flex flex-row items-center text-inherit font-mori font-semibold text-xl md:text-2xl'>
                     <Image src={iconURL} alt="optimism logo" width={56} height={56} className='h-[40px] w-[40px]  md:h-[50px] md:w-[50px] rounded-full mr-2' />
-                    All Delagates
+                    All Delegates
                 </span>
                 <span className='font-normal text-md md:text-xl font-mori'>{"(" + (formatNumber(totalItems) || 0) + " delegates)"}</span>
 
