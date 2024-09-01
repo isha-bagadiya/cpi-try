@@ -53,6 +53,14 @@ const config: Config = {
             fontWeight: "600",
           },
         ],
+        "3xl": [
+          "3.3rem",
+          {
+            lineHeight: "6rem",
+            letterSpacing: "-0.05em",
+            fontWeight: "600",
+          },
+        ],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

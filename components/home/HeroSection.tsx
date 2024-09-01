@@ -13,14 +13,14 @@ const HeroSection: React.FC = () => {
     return (
         <section className="relative bg-dark-gray text-white h-custom">
             <div className='lg:hidden container mx-auto pt-20 w-[85%] md:px-auto flex flex-col'>
-                <div className='font-mori font-semibold text-4xl md:text-7xl relative z-30 text-[#FFFCE1]' >
+                <div className='font-mori font-semibold text-3xl md:text-7xl relative z-30 text-[#FFFCE1]' >
                     <div>Concentration of</div>
-                    <div className='font-mori font-semibold text-4xl md:text-7xl'>
+                    <div className='font-mori font-semibold text-3xl md:text-7xl'>
                         P
                         <Image src={hero2} alt='icon' className='inline w-[3rem] md:w-[5rem]' />
                         wer Index
                     </div>
-                    <div className='font-mori font-semibold text-4xl md:text-7xl'> in DAOs</div>
+                    <div className='font-mori font-semibold text-3xl md:text-7xl'> in DAOs</div>
                     <Link className='button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-2xl my-8' href="/explore">
                         <span className='ml-4 drop-shadow-custom' >Explore Index</span>
                         <Image src={arrow} alt='arrow icon' className='inline border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
