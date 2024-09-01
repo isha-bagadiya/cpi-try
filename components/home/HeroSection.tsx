@@ -17,7 +17,7 @@ const HeroSection: React.FC = () => {
                     <div>Concentration of</div>
                     <div className='font-mori font-semibold text-4xl md:text-7xl'>
                         P
-                        <Image src={hero2} alt='icon' className='inline w-[5rem]' />
+                        <Image src={hero2} alt='icon' className='inline w-[3rem] md:w-[5rem]' />
                         wer Index
                     </div>
                     <div className='font-mori font-semibold text-4xl md:text-7xl'> in DAOs</div>
