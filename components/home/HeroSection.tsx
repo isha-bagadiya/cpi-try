@@ -11,7 +11,7 @@ import Link from 'next/link';
 
 const HeroSection: React.FC = () => {
     return (
-        <section className="relative bg-dark-gray text-white h-custom">
+        <section className="relative bg-dark-gray text-white pb-24">
             <div className='lg:hidden container mx-auto pt-20 w-[85%] md:px-auto flex flex-col'>
                 <div className='font-mori font-semibold text-3xl md:text-7xl relative z-30 text-[#FFFCE1]' >
                     <div>Concentration of</div>

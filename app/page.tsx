@@ -1,6 +1,10 @@
+import FeaturedDAOChart from "@/components/home/FeaturedDAOChart";
 import HeroSection from "@/components/home/HeroSection";
+import Methodology from "@/components/home/Methodology";
+import WhatIsCPI from "@/components/home/WhatIsCPI";
 import Header from "@/components/layout/Header";
 import Image from "next/image";
+
 
 export default function Home() {
   return (
@@ -10,6 +14,9 @@ export default function Home() {
         <button className="button-50" role="button">Button 50</button> */}
         <Header />
         <HeroSection />
+        <WhatIsCPI />
+        <Methodology />
+        <FeaturedDAOChart />
       </div>
     </main>
   );

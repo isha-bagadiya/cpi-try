@@ -12,7 +12,7 @@ const config: Config = {
         "hero-height": "calc(100vh - 8rem)",
       },
       height: {
-        custom: "max(700px, 100vh)", // Custom height utility
+        custom: "max(550px, 100vh)", // Custom height utility
       },
       dropShadow: {
         custom: "0px 4.65px 3.84px 0px rgba(0, 0, 0, 0.1)", // Add custom shadow
@@ -24,7 +24,7 @@ const config: Config = {
         "10xl": [
           "9rem",
           {
-            lineHeight: "12rem",
+            lineHeight: "12.5rem",
             letterSpacing: "-0.05em",
             fontWeight: "600",
           },
@@ -41,6 +41,22 @@ const config: Config = {
           "6rem",
           {
             lineHeight: "8rem",
+            letterSpacing: "-0.05em",
+            fontWeight: "600",
+          },
+        ],
+        "6xl": [
+          "4.5rem",
+          {
+            lineHeight: "6rem",
+            letterSpacing: "-0.05em",
+            fontWeight: "600",
+          },
+        ],
+        "5xl": [
+          "3.8rem",
+          {
+            lineHeight: "6rem",
             letterSpacing: "-0.05em",
             fontWeight: "600",
           },

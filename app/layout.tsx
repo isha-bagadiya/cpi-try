@@ -3,6 +3,7 @@ import { Inter, Red_Hat_Display } from "next/font/google";
 import localFont from "next/font/local"
 import 'react-loading-skeleton/dist/skeleton.css'
 import 'react-tooltip/dist/react-tooltip.css'
+import 'katex/dist/katex.min.css';
 import "./globals.css";
 
 const red_hat_display = Red_Hat_Display({
