@@ -1,6 +1,11 @@
-import CPIChartForOP from "../common/CPIChartForOp";
-import CPIChartofDAOs from "../common/CPIChartofDAOs";
-import LineGraph from "../common/LineGraph";
+// import CPIChartForOP from "../common/CPIChartForOp";
+import dynamic from "next/dynamic";
+// import CPIChartofDAOs from "../common/CPIChartofDAOs";
+// import LineGraph from "../common/LineGraph";
+
+const CPIChartForOP = dynamic(() => import('../common/CPIChartForOp'), { ssr: false });
+const CPIChartofDAOs = dynamic(() => import('../common/CPIChartofDAOs'), { ssr: false });
+const LineGraph = dynamic(() => import('../common/LineGraph'), { ssr: false });
 
 const FeaturedDAOChart: React.FC = () => {
     return <>
