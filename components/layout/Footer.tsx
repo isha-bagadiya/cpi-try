@@ -52,7 +52,7 @@ const Footer: React.FC = () => {
             </div>
             <div className="container mx-auto px-6 mt-10">
                 {/* Social Links */}
-                <div className="flex space-x-8 mt-4 md:mt-0 items-center font-mori font-normal tracking-tighter">
+                <div className="flex space-x-4 md:space-x-8 mt-4 md:mt-0 items-center font-mori font-normal tracking-tighter">
                     <a href="#" className="social-link twitter flex items-center space-x-2 group">
                         <svg
                             className="w-6 h-6 border rounded-full p-1"

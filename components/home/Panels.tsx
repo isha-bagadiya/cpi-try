@@ -11,28 +11,51 @@ const Panels: React.FC = () => {
     const slider = useRef<HTMLDivElement>(null); // Slider/container ref
 
     useGSAP(() => {
+        // Use GSAP's matchMedia for responsive animations
         let ctx = gsap.context(() => {
             let panels = gsap.utils.toArray(".panel") as HTMLElement[];
 
-            // Horizontal scrolling animation
-            gsap.to(panels, {
-                xPercent: -100 * (panels.length - 1), // Move horizontally
-                ease: "none", // No easing for continuous scroll
-                scrollTrigger: {
-                    trigger: slider.current, // The slider container is the scroll trigger
-                    pin: true, // Pin the container
+            // Media queries for responsiveness
+            let mm = gsap.matchMedia();
 
-                    scrub: 1, // Smooth scrolling
-                    snap: 1 / (panels.length - 1), // Snap to each panel
-                    end: () => "+=" + slider.current!.offsetWidth, // End after the width of all panels is scrolled
-                    markers: true, // Remove markers for production
-                },
+            mm.add("(min-width: 768px)", () => {
+                // Desktop/Tablet version - larger screens
+                gsap.to(panels, {
+                    xPercent: -100 * (panels.length - 1), // Move horizontally
+                    ease: "none", // No easing for continuous scroll
+                    scrollTrigger: {
+                        trigger: slider.current, // The slider container is the scroll trigger
+                        pin: true, // Pin the container
+                        scrub: 1, // Smooth scrolling
+                        snap: 1 / (panels.length - 1), // Snap to each panel
+                        end: () => "+=" + slider.current!.offsetWidth, // End after the width of all panels is scrolled
+                        markers: false, // Remove markers for production
+                    },
+                });
             });
+
+            mm.add("(max-width: 767px)", () => {
+                // Mobile version
+                gsap.to(panels, {
+                    xPercent: -100 * (panels.length - 1), // Move horizontally
+                    ease: "none", // No easing for continuous scroll
+                    scrollTrigger: {
+                        trigger: slider.current, // The slider container is the scroll trigger
+                        pin: true, // Pin the container
+                        scrub: 1, // Smooth scrolling
+                        snap: 1 / (panels.length - 1), // Snap to each panel
+                        end: () => "+=" + slider.current!.scrollWidth, // End after the width of all panels is scrolled
+                        markers: false, // Remove markers for production
+                    },
+                });
+            });
+
         }, component);
 
         // Cleanup on component unmount
         return () => ctx.revert();
     }, { scope: component });
+
 
     return (
         <div ref={component} className="relative w-full bg-black">
@@ -59,7 +82,7 @@ const Panels: React.FC = () => {
                 </div>
                 <div className="panel min-w-[100vw] h-screen p-20 flex flex-col justify-center">
                     <div className="p-5 mb-8 bg-custom-green rounded-xl w-max max-w-[80%]">
-                        <h2 className="font-mori text-black text-[5vw] md:text-[3vw]] leading-10 tracking-tighter font-bold">Power Concentration</h2>
+                        <h2 className="font-mori text-black text-[5vw] md:text-[3vw] leading-10 tracking-tighter font-bold">Power Concentration</h2>
                     </div>
                     <p className="font-mori font-normal tracking-tight text-[3.5vw] md:text-[2vw] leading-6 md:leading-10 mt-8">Power Concentration refers to the degree of centralization in a DAO. A high concentration of power suggests that decision-making is centralized among a few delegates or governance bodies, indicating lower decentralization. Conversely, a low concentration of power implies a more decentralized structure where decision-making authority is more evenly distributed across delegates. The mHHI captures this by measuring the sum of squared voting power, helping to quantify the level of decentralization in the Optimism Collective.</p>
                 </div>
