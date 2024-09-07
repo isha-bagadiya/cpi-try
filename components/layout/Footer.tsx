@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             {/* Newsletter Signup Section */}
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center">
-                    <div className="w-full">
+                    <div className="w-full md:w-auto">
                         <h2 className="text-lg mb-2 font-mori font-normal">Sign up to our newsletter:</h2>
                         <div className="flex items-center justify-between bg-black border border-white rounded-full p-2 mt-6">
                             <input

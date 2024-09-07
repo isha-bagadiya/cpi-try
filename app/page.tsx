@@ -29,6 +29,7 @@ export default function Home() {
           </div>
           <AddYourDAO />
           <Footer />
+
         </div>
       </main>
     </SmoothScrolling>
