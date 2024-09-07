@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             {/* Newsletter Signup Section */}
             <div className="container mx-auto px-6">
                 <div className="flex flex-col md:flex-row justify-between items-center">
-                    <div>
+                    <div className="w-full">
                         <h2 className="text-lg mb-2 font-mori font-normal">Sign up to our newsletter:</h2>
                         <div className="flex items-center justify-between bg-black border border-white rounded-full p-2 mt-6">
                             <input
@@ -52,8 +52,8 @@ const Footer: React.FC = () => {
             </div>
             <div className="container mx-auto px-6 mt-10">
                 {/* Social Links */}
-                <div className="flex space-x-4 md:space-x-8 mt-4 md:mt-0 items-center font-mori font-normal tracking-tighter">
-                    <a href="#" className="social-link twitter flex items-center space-x-2 group">
+                <div className="flex flex-wrap space-x-4 md:space-x-8 mt-4 md:mt-0 items-center font-mori font-normal tracking-tighter">
+                    <a href="https://x.com/chain_haya" className="social-link twitter flex items-center space-x-2 group" target="_blank">
                         <svg
                             className="w-6 h-6 border rounded-full p-1"
                             width="31"
@@ -76,7 +76,7 @@ const Footer: React.FC = () => {
                         </svg>
 
                     </a>
-                    <a href="#" className="social-link telegram flex items-center space-x-2">
+                    <a href="https://t.me/Chain_L" className="social-link telegram flex items-center space-x-2" target="_blank">
                         <svg
                             className="w-6 h-6 border rounded-full p-1"
                             width="36"
