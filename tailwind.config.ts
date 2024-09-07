@@ -77,6 +77,14 @@ const config: Config = {
             fontWeight: "600",
           },
         ],
+        "2.5xl": [
+          "2.8rem",
+          {
+            lineHeight: "3rem",
+            letterSpacing: "-0.05em",
+            fontWeight: "600",
+          },
+        ],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -89,6 +97,9 @@ const config: Config = {
         compound: "#00D395",
         uniswap: "#FF007A",
         "dark-gray": "#0E100F",
+        "custom-green": "#2FFF6A",
+        "custom-orange": "#FF8709",
+        "custom-pink": "#FEC5FB",
       },
       fontFamily: {
         redhat: ["var(--font-red-hat)"],

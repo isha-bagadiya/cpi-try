@@ -196,9 +196,9 @@ const LineGraph: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center p-5 rounded-lg shadow-md w-full my-10 pb-8">
+        <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">
             {/* Header Section */}
-            <h2 className='font-mori font-semibold text-white text-5xl mb-4'>Optimisum CPI Over Time </h2>
+            <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Optimisum CPI Over Time </h2>
             <div className="border border-gray-300 flex justify-center items-center mb-4 self-end rounded-lg">
                 <label>
                     <span className='hidden'> Optimism CPI Over Time</span>
@@ -221,6 +221,8 @@ const LineGraph: React.FC = () => {
                 <div className="font-mori font-normal text-xs text-gray-500 text-end pt-4">Last updated on:- <span className='text-black ml-1'>{lastUpdateDate}</span></div>
 
             </div>
+
+            <div className='font-mori font-normal max-w-[90%] pt-4'>The concentration of power within the collective has been steadily declining with each season and RPGF round.</div>
         </div>
     );
 };

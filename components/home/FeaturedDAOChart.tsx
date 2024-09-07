@@ -12,7 +12,6 @@ const FeaturedDAOChart: React.FC = () => {
         <CPIChartofDAOs />
         <LineGraph />
         <CPIChartForOP />
-
     </>
 }
 

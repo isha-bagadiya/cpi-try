@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import 'react-tooltip/dist/react-tooltip.css'
 import 'katex/dist/katex.min.css';
 import "./globals.css";
+import dynamic from "next/dynamic";
 
 const red_hat_display = Red_Hat_Display({
   weight: ['400', '600'],
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
   title: "Concentration of Power Index in DAOs",
   description: "Tracking and analyzing the distribution of influence within decentralized governance structures",
 };
+const SmoothScrolling = dynamic(() => import('@/components/layout/SmoothScrolling'), { ssr: false });
 
 export default function RootLayout({
   children,
@@ -42,7 +44,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${red_hat_display.variable} ${pp_mori.variable}`}>{children}</body>
+      <body className={`${red_hat_display.variable} ${pp_mori.variable}`}>
+        <SmoothScrolling>{children}</SmoothScrolling>
+      </body>
     </html>
   );
 }

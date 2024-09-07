@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.1",
+    "@studio-freight/react-lenis": "^0.0.47",
     "chart.js": "^4.4.4",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-annotation": "^3.0.1",
     "class-variance-authority": "^0.7.0",
     "date-fns": "^3.6.0",
     "ethers": "^6.13.2",
+    "gsap": "^3.12.5",
     "katex": "^0.16.11",
     "next": "14.2.7",
     "react": "^18",

@@ -51,7 +51,7 @@ export default function FilterButtons() {
                 <button
                     key={button}
                     onClick={() => toggleButton(button)}
-                    className={`min-h-[30px] md:min-h-[40px] lg:min-h-[50px] min-w-[100px] md:min-w-[200px] lg:min-w-[250px] px-4 py-1 md:px-10 md:py-5 text-lg md:text-2xl font-redhat font-semibold uppercase rounded-lg transition-all duration-300 ${buttonColors[button]} text-white shadow-md button-50
+                    className={`min-h-[30px] md:min-h-[40px] lg:min-h-[50px] min-w-[100px] md:min-w-[200px] lg:min-w-[250px] px-4 py-1 md:px-10 md:py-5 text-lg md:text-2xl font-redhat font-semibold uppercase transition-all duration-300 ${buttonColors[button]} text-white button-50
                         ${activeButtons.includes(button)
                             ? "opacity-100"
                             : "opacity-30 "

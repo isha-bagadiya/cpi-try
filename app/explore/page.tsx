@@ -30,10 +30,10 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
         console.error("Error fetching data:", error);
     }
 
-    return <>
+    return <div className="bg-dark-gray">
         <Header />
-        <div className="container mx-auto mb-4 flex flex-col bg-dark-gray">
-            <h1 className="font-mori font-semibold text-[#fffce1] text-3xl md:text-5xl lg:text-7xl tracking-tight text-center my-6 md:my-12">All Delegates</h1>
+        <div className="container mx-auto pb-4 flex flex-col bg-dark-gray">
+            <h1 className="font-mori font-semibold text-[#fffce1] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center my-6 md:my-12">All Delegates</h1>
             <FilterButtons />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 m-4 md:gap-8 md:m-8 min-h-[100vh]">
                 {isVisible('Optimism') && (
@@ -66,7 +66,7 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
                 )}
             </div>
         </div>
-    </>;
+    </div>;
 }
 
 export default explore;

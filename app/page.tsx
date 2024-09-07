@@ -1,9 +1,14 @@
+import AddYourDAO from "@/components/home/AddYourDAO";
+import ExpertAnalysis from "@/components/home/ExpertAnalysis";
 import FeaturedDAOChart from "@/components/home/FeaturedDAOChart";
 import HeroSection from "@/components/home/HeroSection";
 import Methodology from "@/components/home/Methodology";
 import WhatIsCPI from "@/components/home/WhatIsCPI";
+import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const Panels = dynamic(() => import('@/components/home/Panels'), { ssr: false });
 
 
 export default function Home() {
@@ -17,6 +22,12 @@ export default function Home() {
         <WhatIsCPI />
         <Methodology />
         <FeaturedDAOChart />
+        <ExpertAnalysis />
+        <div>
+          <Panels />
+        </div>
+        <AddYourDAO />
+        <Footer />
       </div>
     </main>
   );

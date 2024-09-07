@@ -39,7 +39,6 @@ body {
   display: inline-block;
   overflow: visible;
   text-align: center;
-  text-transform: uppercase;
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
@@ -49,10 +48,12 @@ body {
 
 .button-50[aria-label="Optimism"] {
   background: #ff0420;
+  box-shadow: #ffffff 4px 4px 0 0, #000 4px 4px 0 1px;
 }
 
 .button-50[aria-label="Aave"] {
   background: linear-gradient(90deg, #2ebac6, #b6509e);
+  box-shadow: #ffffff 4px 4px 0 0, #000 4px 4px 0 1px;
 }
 .button-50[aria-label="Compound"] {
   background: black;
@@ -63,6 +64,21 @@ body {
   background: white;
   color: #ff007a;
   box-shadow: #ff007a 4px 4px 0 0, #000 4px 4px 0 1px;
+}
+.button-50[aria-label="contact-us"] {
+  background: #ff8709;
+  box-shadow: #ffffff 4px 4px 0 0, #000 4px 4px 0 1px;
+}
+.button-50[aria-label="add-your-dao"] {
+  background: white;
+  background-color: white;
+  color: #957bff;
+  height: max-content;
+  text-transform: capitalize;
+  padding: 10px 10px;
+  letter-spacing: normal;
+  display: flex;
+  box-shadow: #957bff 4px 4px 0 0, #000 4px 4px 0 1px;
 }
 .button-50:focus {
   text-decoration: none;
@@ -207,4 +223,45 @@ body::-webkit-scrollbar-thumb {
   background-color: #ddd; /* color of the scroll thumb */
   border-radius: 20px; /* roundness of the scroll thumb */
   border: 0px solid #ddd; /* creates padding around scroll thumb */
+}
+
+.social-link.twitter:hover svg path,
+.social-link.twitter:hover,
+.social-link.twitter:hover svg {
+  fill: #b8f57f;
+  color: #b8f57f;
+  border-color: #b8f57f;
+  text-decoration: underline;
+}
+.social-link.telegram:hover svg path,
+.social-link.telegram:hover,
+.social-link.telegram:hover svg {
+  fill: #957bff;
+  color: #957bff;
+  border-color: #957bff;
+  text-decoration: underline;
+}
+.social-link.contact:hover svg path,
+.social-link.contact:hover svg,
+.social-link.contact:hover {
+  stroke: #ff8709;
+  color: #ff8709;
+  border-color: #ff8709;
+  text-decoration: underline;
+}
+
+.popup {
+  background: rgba(0, 0, 0, 0.562);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid #fec5fb;
+}
+
+.popup input::placeholder,
+.popup textarea::placeholder {
+  color: #ffffff3d;
+}
+.popup input,
+.popup textarea {
+  border: 1px solid #ffffff3d;
 }

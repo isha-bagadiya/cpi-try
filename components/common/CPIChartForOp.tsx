@@ -152,8 +152,8 @@ const CPIChartForOP: React.FC = () => {
     return (
 
 
-        <div className="w-full flex flex-col items-center justify-center my-10 pb-8">
-            <h2 className='font-mori font-semibold text-white text-5xl mb-4'>Key Insights and Trends</h2>
+        <div className="w-full flex flex-col items-center justify-center my-10 p-3 pb-8">
+            <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Key Insights and Trends</h2>
             <div className="bg-white shadow-lg rounded-lg p-5 w-full max-w-4xl">
                 {/* Header Section */}
 

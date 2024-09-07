@@ -10,25 +10,25 @@ import Image from "next/image";
 
 const Methodology: React.FC = () => {
 
-    return <div className="py-20">
-        <div className="container mx-auto px-10">
-            <div className="font-mori font-semibold text-white text-6xl mb-8">
+    return <div className="pt-20">
+        <div className="container mx-auto px-6">
+            <div className="font-mori font-semibold text-white text-4xl md:text-5xl mb-8">
                 Methodology
             </div>
-            <div className=" font-mori font-normal text-2xl">
+            <div className=" font-mori font-normal text-xl">
                 <span>CPI formula for Optimism Collective:</span>
-                <div className="text-[#957BFF] text-[2.2rem] my-8">
+                <div className="text-[#957BFF] text-[1.5rem] md:text-[2.2rem] my-8">
                     <MathFormula formula="\sum_{i \ \in \ D} V_{i} \ ^2 \quad{ where } \ V_{i} = \sum_{j \ \in \ HCC} (V_{j} * I_{j})" displayMode={false} />
                 </div>
             </div>
 
         </div>
         {/* Where section */}
-        <div className="border-t border-[#777777] flex justify-between items-start px-10 flex-col md:flex-row">
+        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={whereImg} alt="abstract icon" className="w-[]" />
             </div>
-            <div className="flex-1 p-10 flex flex-col justify-between items-start h-full">
+            <div className="flex-1 pb-10 md:p-10 flex flex-col justify-between items-start h-full">
                 <span className="font-mori font-semibold text-[#957BFF] text-[2rem]">Where</span>
 
                 <ul className="list-none flex-1 font-mori font-normal text-xl tracking-tight mt-14">
@@ -50,11 +50,11 @@ const Methodology: React.FC = () => {
             </div>
         </div>
         {/* Set Definitions section */}
-        <div className="border-t border-[#777777] flex justify-between items-start px-10 flex-col md:flex-row">
+        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={setDef} alt="abstract icon" />
             </div>
-            <div className="flex-1 p-10 flex flex-col justify-between items-start h-full">
+            <div className="flex-1 pb-10 md:p-10 flex flex-col justify-between items-start h-full">
                 <span className="font-mori font-semibold text-[#2FFF6A] text-[2rem]">Set Definitions</span>
                 <ul className="list-none flex-1 font-mori font-normal text-xl tracking-tight mt-14">
                     <li className="flex items-start mb-4">
@@ -74,11 +74,11 @@ const Methodology: React.FC = () => {
             </div>
         </div>
         {/* Explanation section */}
-        <div className="border-t border-[#777777] flex justify-between items-start px-10 flex-col md:flex-row">
+        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={exp} alt="abstract icon" />
             </div>
-            <div className="flex-1 p-10 flex flex-col justify-between items-start h-full">
+            <div className="flex-1 pb-10 md:p-10 flex flex-col justify-between items-start h-full">
                 <span className="font-mori font-semibold text-[#FEC5FB] text-[2rem]">Explanation</span>
                 <ul className="list-none flex-1 font-mori font-normal text-xl tracking-tight mt-14">
                     <li className="flex items-start mb-4">
