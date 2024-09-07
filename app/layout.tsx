@@ -35,7 +35,6 @@ export const metadata: Metadata = {
   title: "Concentration of Power Index in DAOs",
   description: "Tracking and analyzing the distribution of influence within decentralized governance structures",
 };
-const SmoothScrolling = dynamic(() => import('@/components/layout/SmoothScrolling'), { ssr: false });
 
 export default function RootLayout({
   children,
@@ -45,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${red_hat_display.variable} ${pp_mori.variable}`}>
-        <SmoothScrolling>{children}</SmoothScrolling>
+        {children}
       </body>
     </html>
   );
