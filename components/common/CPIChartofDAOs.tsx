@@ -67,7 +67,7 @@ const CPIChartofDAOs: React.FC = () => {
 
     return (
 
-        <div className="w-full flex flex-col items-center justify-center my-10 p-3 pb-8">
+        <div className="container mx-auto flex flex-col items-center justify-center my-10 p-3 pb-8">
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Featured DAOs CPI</h2>
             <div className="bg-white shadow-lg rounded-lg p-5 w-full max-w-4xl">
                 {/* Header Section */}

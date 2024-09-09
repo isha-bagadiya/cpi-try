@@ -4,7 +4,6 @@ import img from "@/public/assets/images/plus_icon.svg"
 import img2 from "@/public/assets/images/img2.png"
 import NewDAOModal from "../ui/NewDAOModal";
 import { useState } from "react";
-import SplineNext from "@splinetool/react-spline/next";
 
 
 const AddYourDAO: React.FC = () => {
@@ -27,9 +26,7 @@ const AddYourDAO: React.FC = () => {
             </div>
 
             {/* <Image src={"/assets/images/img2.png"} fill={true} className="absolute object-cover" alt="background image" /> */}
-            <SplineNext
-                scene="https://prod.spline.design/qIKddUTh5M5qC5-V/scene.splinecode"
-            />
+
             {isOpen && <NewDAOModal closeModal={closeModal} />}
         </div>
     )

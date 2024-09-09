@@ -1,15 +1,17 @@
-import AddYourDAO from "@/components/home/AddYourDAO";
+
 import ExpertAnalysis from "@/components/home/ExpertAnalysis";
 import FeaturedDAOChart from "@/components/home/FeaturedDAOChart";
 import HeroSection from "@/components/home/HeroSection";
 import Methodology from "@/components/home/Methodology";
 import WhatIsCPI from "@/components/home/WhatIsCPI";
-import Footer from "@/components/layout/Footer";
+
 import Header from "@/components/layout/Header";
 import dynamic from "next/dynamic";
 
 const Panels = dynamic(() => import('@/components/home/Panels'), { ssr: false });
 const SmoothScrolling = dynamic(() => import('@/components/layout/SmoothScrolling'), { ssr: false });
+const AddYourDAO = dynamic(() => import('@/components/home/AddYourDAO'), { ssr: false });
+const Footer = dynamic(() => import('@/components/layout/Footer'), { ssr: false });
 
 export default function Home() {
   return (

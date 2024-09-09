@@ -196,7 +196,7 @@ const LineGraph: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">
+        <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">
             {/* Header Section */}
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Optimisum CPI Over Time </h2>
             <div className="border border-gray-300 flex justify-center items-center mb-4 self-end rounded-lg">
@@ -222,7 +222,7 @@ const LineGraph: React.FC = () => {
 
             </div>
 
-            <div className='font-mori font-normal max-w-[90%] pt-4'>The concentration of power within the collective has been steadily declining with each season and RPGF round.</div>
+            <div className='font-mori font-normal max-w-[90%] pt-4 text-xl'>The concentration of power within the collective has been steadily declining with each season and RPGF round.</div>
         </div>
     );
 };
