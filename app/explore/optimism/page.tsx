@@ -1,7 +1,10 @@
 import DataTable from "@/components/common/DataTable";
 import Header from "@/components/layout/Header";
 import { getItem } from "@/lib/utils/fetchDataOnServer";
+import Image from "next/image";
+import Link from "next/link";
 import { Suspense } from "react";
+import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
 
 const optimism: React.FC = async () => {
     let initialDataOptimism = [];
@@ -18,6 +21,13 @@ const optimism: React.FC = async () => {
                     </Suspense>
                 </div>
                 {/* </div> */}
+
+                <div className="my-20 flex items-center justify-center">
+                    <Link className='flex flex-row button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-xl mr-8' href="/explore">
+                        <span className='ml-4 drop-shadow-custom' >Other Delegates</span>
+                        <Image src={arrow} alt='arrow icon' className='border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
+                    </Link>
+                </div>
             </div>
         </div>
     )
