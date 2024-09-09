@@ -10,21 +10,21 @@ import Image from "next/image";
 
 const Methodology: React.FC = () => {
 
-    return <div className="pt-20">
-        <div className="container mx-auto px-6">
+    return <div className="pt-20 bg-dark-gray">
+        <div className="container mx-auto px-6 bg-dark-gray">
             <div className="font-mori font-semibold text-white text-4xl md:text-5xl mb-8">
                 Methodology
             </div>
             <div className=" font-mori font-normal text-xl">
                 <span>CPI formula for Optimism Collective:</span>
-                <div className="text-[#957BFF] text-[1.5rem] md:text-[2.2rem] my-8">
+                <div className="text-[#957BFF] text-[1.5rem] md:text-[2.2rem] lg:text-[3rem] my-20">
                     <MathFormula formula="\sum_{i \ \in \ D} V_{i} \ ^2 \quad{ where } \ V_{i} = \sum_{j \ \in \ HCC} (V_{j} * I_{j})" displayMode={false} />
                 </div>
             </div>
 
         </div>
         {/* Where section */}
-        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
+        <div className="container mx-auto mt-20 border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={whereImg} alt="abstract icon" className="w-[]" />
             </div>
@@ -50,7 +50,7 @@ const Methodology: React.FC = () => {
             </div>
         </div>
         {/* Set Definitions section */}
-        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
+        <div className="container mx-auto border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={setDef} alt="abstract icon" />
             </div>
@@ -74,7 +74,7 @@ const Methodology: React.FC = () => {
             </div>
         </div>
         {/* Explanation section */}
-        <div className="border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
+        <div className="container mx-auto border-t border-[#777777] flex justify-between items-center px-10 flex-col md:flex-row">
             <div className="w-[30%] p-8 min-w-[250px]">
                 <Image src={exp} alt="abstract icon" />
             </div>

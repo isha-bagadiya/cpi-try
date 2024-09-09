@@ -13,7 +13,7 @@ const Header = () => {
                     <div className="flex-shrink-0 flex items-center">
                         <Link href="/">
                             <Image
-                                src="/assets/images/CoPI.svg"
+                                src="/assets/images/CPI.svg"
                                 alt="Logo"
                                 width={300}
                                 height={50}

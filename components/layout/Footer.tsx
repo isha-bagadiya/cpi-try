@@ -76,7 +76,7 @@ const Footer: React.FC = () => {
                         </svg>
 
                     </a>
-                    <a href="https://t.me/Chain_L" className="social-link telegram flex items-center space-x-2" target="_blank">
+                    <a href="https://t.me/ChaIn_L" className="social-link telegram flex items-center space-x-2" target="_blank">
                         <svg
                             className="w-6 h-6 border rounded-full p-1"
                             width="36"
@@ -131,7 +131,7 @@ const Footer: React.FC = () => {
                     }}
                 >
                     {/* Two copies of the CoPI text for seamless looping */}
-                    <span className="mx-6">CoPI CoPI CoPI CoPI CoPI CoPI CoPI</span>
+                    <span className="mx-6">CPI CPI CPI CPI CPI CPI CPI CPI CPI</span>
                 </div>
             </div>
             {isOpen && <ContactModal closeModal={closeModal} />}
