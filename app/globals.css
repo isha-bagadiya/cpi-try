@@ -26,7 +26,14 @@ body {
     text-wrap: balance;
   }
 }
-
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(1turn);
+  }
+}
 .button-50 {
   appearance: button;
   background-color: #000;

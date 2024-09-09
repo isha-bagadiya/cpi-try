@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import img from "@/public/assets/images/pix_arrow.svg";
+
 import img2 from "@/public/assets/images/white-logo-icon.svg";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import ContactModal from "../ui/ContactModal";
+import NewsLetterSignUp from "../common/NewsLetterSignUp";
 
 const Footer: React.FC = () => {
     const movingTextRef = useRef<HTMLDivElement | null>(null);
@@ -34,15 +35,8 @@ const Footer: React.FC = () => {
                 <div className="flex flex-col md:flex-row justify-between items-center">
                     <div className="w-full md:w-auto">
                         <h2 className="text-lg mb-2 font-mori font-normal">Sign up to our newsletter:</h2>
-                        <div className="flex items-center justify-between bg-black border border-white rounded-full p-2 mt-6">
-                            <input
-                                type="email"
-                                placeholder="your@email.com"
-                                className="ml-2 max-w-[80%] bg-transparent text-[1.8rem] font-mori font-semibold text-white placeholder-[#333333] focus:outline-none flex-grow"
-                            />
-                            <button className="bg-[#262626] text-white p-2 rounded-full ml-4">
-                                <Image src={img} alt="arrow icon" width={24} />
-                            </button>
+                        <div >
+                            <NewsLetterSignUp />
                         </div>
                     </div>
                     <div className="mt-10 md:mt-auto">
