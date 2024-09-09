@@ -8,8 +8,8 @@ import { Color, IcosahedronGeometry, MeshDepthMaterial, MeshPhysicalMaterial, RG
 import CustomShaderMaterial from 'three-custom-shader-material';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { useMediaQuery } from 'usehooks-ts';
-import vertexShader from './shaders/vertex.glsl?raw';
-import fragmentShader from './shaders/fragment.glsl?raw';
+import vertexShader from './shaders/vertex.glsl';
+import fragmentShader from './shaders/fragment.glsl';
 
 
 interface ExperimentProps {
