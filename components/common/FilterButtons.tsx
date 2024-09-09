@@ -4,18 +4,18 @@ import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
-const buttons = ['Optimism', 'Aave', 'Compound', 'Uniswap'] as const;
+const buttons = ['Aave', 'Compound', 'Uniswap'] as const;
 
 type ButtonType = typeof buttons[number];
 
 const buttonImages: Record<ButtonType, string> = {
-    Optimism: '/assets/images/optimism.svg',
+    // Optimism: '/assets/images/optimism.svg',
     Aave: '/assets/images/aave.svg',
     Compound: '/assets/images/compound.svg',
     Uniswap: '/assets/images/uniswap.svg'
 };
 const buttonColors: Record<ButtonType, string> = {
-    Optimism: 'bg-[#c80925] ',
+    // Optimism: 'bg-[#c80925] ',
     Aave: 'bg-gradient-to-r from-[#8c3ebc] to-[#007782]',
     Compound: 'bg-[#121B23]',
     Uniswap: 'bg-[#FB58FF]'

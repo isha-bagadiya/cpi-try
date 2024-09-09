@@ -22,7 +22,7 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
     let initialCompoundData = [];
 
     try {
-        if (isVisible('Optimism')) initialDataOptimism = await getItem();
+        initialDataOptimism = await getItem();
         if (isVisible('Aave')) initialDataAave = await getItemsAave();
         if (isVisible('Uniswap')) initialUniswapData = await getItemsUniswap();
         if (isVisible('Compound')) initialCompoundData = await getItemCompound();
@@ -32,17 +32,25 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
 
     return <div className="bg-dark-gray">
         <Header />
-        <div className="container mx-auto pb-4 flex flex-col bg-dark-gray">
+        <div>
+            <h1 className="font-mori font-semibold text-[#fffce1] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center my-6 md:my-12">OP Delegates</h1>
+            <div className="custom-scrollbar">
+                <Suspense fallback={<>Loading...</>}>
+                    <DataTable initialData={initialDataOptimism} background="bg-optimism" platform="optimism" member={true} iconURL="/assets/images/op_small.svg" />
+                </Suspense>
+            </div>
+        </div>
+        <div className="container mx-auto mt-8 pb-4 flex flex-col bg-dark-gray">
             <h1 className="font-mori font-semibold text-[#fffce1] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center my-6 md:my-12">All Delegates</h1>
             <FilterButtons />
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 m-4 md:gap-8 md:m-8 min-h-[100vh]">
-                {isVisible('Optimism') && (
+                {/* {isVisible('Optimism') && (
                     <div className="custom-scrollbar">
                         <Suspense fallback={<>Loading...</>}>
                             <DataTable initialData={initialDataOptimism} background="bg-optimism" platform="optimism" member={true} iconURL="/assets/images/op_small.svg" />
                         </Suspense>
                     </div>
-                )}
+                )} */}
                 {isVisible('Aave') && (
                     <div className="custom-scrollbar">
                         <Suspense fallback={<>Loading...</>}>
