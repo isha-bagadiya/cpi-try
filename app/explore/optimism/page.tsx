@@ -24,7 +24,7 @@ const optimism: React.FC = async () => {
 
                 <div className="my-20 flex items-center justify-center">
                     <Link className='flex flex-row button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-xl mr-8' href="/explore">
-                        <span className='ml-4 drop-shadow-custom' >Other Delegates</span>
+                        <span className='ml-4 drop-shadow-custom' >Other DAOs Delegates</span>
                         <Image src={arrow} alt='arrow icon' className='border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
                     </Link>
                 </div>

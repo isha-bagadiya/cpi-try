@@ -6,11 +6,11 @@ import { DelegateData } from '@/types';
 const MembershipBadges: React.FC<{ item: DelegateData }> = ({ item }) => {
     const badges = [
         { key: 'ch_member_r4', zIndex: 60, tooltipmsg: "Citizens' House Member Round 4", src: "/assets/images/2.svg" },
-        { key: 'gc_member_s5', zIndex: 50, tooltipmsg: "Grants Council Member Season 5", src: "/assets/images/3.svg" },
-        { key: 'gc_member_mm_s5', zIndex: 40, tooltipmsg: "Grants Council (Milestone & Metrics Sub-committee) Season 5", src: "/assets/images/3.svg" },
-        { key: 'sc_member_s5', zIndex: 30, tooltipmsg: "Security Council Member Season 5", src: "/assets/images/5.svg" },
-        { key: 'coc_member_s5', zIndex: 20, tooltipmsg: "Code of Conduct Council Member Season 5", src: "/assets/images/6.svg" },
-        { key: 'dab_member_s5', zIndex: 10, tooltipmsg: "Developer Advisory Board Member Season 5", src: "/assets/images/7.svg" },
+        { key: 'gc_member_s5', zIndex: 50, tooltipmsg: "Grants Council Member Season 6", src: "/assets/images/3.svg" },
+        { key: 'gc_member_mm_s5', zIndex: 40, tooltipmsg: "Grants Council (Milestone & Metrics Sub-committee) Season 6", src: "/assets/images/3.svg" },
+        { key: 'sc_member_s5', zIndex: 30, tooltipmsg: "Security Council Member Season 6", src: "/assets/images/5.svg" },
+        { key: 'coc_member_s5', zIndex: 20, tooltipmsg: "Code of Conduct Council Member Season 6", src: "/assets/images/6.svg" },
+        { key: 'dab_member_s5', zIndex: 10, tooltipmsg: "Developer Advisory Board Member Season 6", src: "/assets/images/7.svg" },
     ] as const;
 
     const activeBadges = badges.filter(badge => item[badge.key as keyof DelegateData] === "1");

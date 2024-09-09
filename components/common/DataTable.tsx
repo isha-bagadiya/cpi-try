@@ -281,6 +281,7 @@ const DataTable: React.FC<InitialDataProps> = ({ initialData, member, background
                     onPageChange={handlePageChange}
                 />
             </div>
+            <div className="font-mori font-normal text-xs text-gray-500 self-end p-4">Last updated on:- <span className='text-black ml-1'>27 August 2024</span></div>
         </div >
     );
 }
