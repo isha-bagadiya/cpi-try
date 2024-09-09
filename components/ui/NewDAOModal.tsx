@@ -1,11 +1,11 @@
 'use client';
 import { useState } from 'react';
 
-interface ContactModalProps {
+interface newDAOModalProps {
     closeModal: () => void;
 }
 
-const ContactModal: React.FC<ContactModalProps> = ({ closeModal }) => {
+const NewDAOModal: React.FC<newDAOModalProps> = ({ closeModal }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
@@ -20,7 +20,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ closeModal }) => {
         setSuccess(null);
 
         try {
-            const res = await fetch('/api/contact', {
+            const res = await fetch('/api/newdao', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ closeModal }) => {
                     </button>
 
                     {/* Contact Form */}
-                    <h2 className="text-2xl mb-4 font-mori font-semibold tracking-tighter">Contact us</h2>
+                    <h2 className="text-2xl mb-4 font-mori font-semibold tracking-tighter">Add Your DAO</h2>
                     <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
                         <div className="flex space-x-2 mb-2">
                             <div className="w-full md:w-1/2">
@@ -95,13 +95,13 @@ const ContactModal: React.FC<ContactModalProps> = ({ closeModal }) => {
 
                         <div className="mb-4">
                             <label htmlFor="message" className="p-2 font-mori font-normal text-[12px] tracking-tighter">
-                                Message
+                                DAO Information
                             </label>
                             <textarea
                                 id="message"
                                 rows={4}
                                 className="w-full font-normal text-[1rem] p-2 mt-2 bg-transparent rounded-lg outline-none border-none focus:ring-1 focus:ring-orange-500"
-                                placeholder="Write your message here"
+                                placeholder="Write your dao information here"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 required
@@ -126,4 +126,4 @@ const ContactModal: React.FC<ContactModalProps> = ({ closeModal }) => {
     );
 };
 
-export default ContactModal;
+export default NewDAOModal;
