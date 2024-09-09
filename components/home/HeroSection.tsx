@@ -21,7 +21,7 @@ const HeroSection: React.FC = () => {
                         wer Index
                     </div>
                     <div className='font-mori font-semibold text-4xl md:text-7xl'> in DAOs</div>
-                    <Link className='button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-2xl my-8' href="/explore">
+                    <Link className='button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-2xl my-8' href="/explore/optimism">
                         <span className='ml-4 drop-shadow-custom' >Explore Index</span>
                         <Image src={arrow} alt='arrow icon' className='inline border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
                     </Link>
@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
                     Concentration of
                 </div>
                 <div className=' z-30 flex flex-row items-center text-[#FFFCE1]'>
-                    <Link className='flex flex-row button-50 heroarrowbtn  justify-center items-center font-redhat font-semibold text-2xl mr-8' href="/explore">
+                    <Link className='flex flex-row button-50 heroarrowbtn  justify-center items-center font-redhat font-semibold text-2xl mr-8' href="/explore/optimism">
                         <span className='ml-4 drop-shadow-custom' >Explore Index</span>
                         <Image src={arrow} alt='arrow icon' className='border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
                     </Link>
