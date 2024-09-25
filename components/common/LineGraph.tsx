@@ -7,8 +7,6 @@ import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { parse, format } from 'date-fns';
 
-
-
 ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, annotationPlugin);
 
 // Define types for Event and Annotation
@@ -27,10 +25,10 @@ interface CustomChartData extends ChartData<'line'> {
     annotations?: Annotation;
 }
 
-
 // Define the shape of the CPI Data
 interface CPIData {
     date: string;
+    'Token house CPI': string;
     CPI: string;
 }
 
@@ -43,13 +41,13 @@ const LineGraph: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch('/output_hhi_cpi.json');
+                const response = await fetch('/daily_hhi_cpi.json');
                 const data: CPIData[] = await response.json();
                 const formattedData = parseJSON(data);
+                console.log("formattedData", formattedData)
 
                 const lastDate = formattedData.labels[formattedData.labels.length - 1] as Date;
                 setLastUpdateDate(lastDate ? format(lastDate, 'dd MMMM yyyy') : 'N/A');
-                console.log(formattedData)
                 setChartData(formattedData);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -63,17 +61,22 @@ const LineGraph: React.FC = () => {
     const parseJSON = (data: CPIData[]) => {
         const labels: Date[] = [];
         const cpiData: number[] = [];
+        const tokenHouseCpiData: number[] = [];  // Add an array for "Token house CPI" data
 
         data.forEach((item) => {
-            const date = parse(item.date, 'dd-MM-yyyy', new Date());
+            // Update the format from "dd-MM-yyyy" to "MM-dd-yyyy"
+            const date = parse(item.date, 'MM-dd-yyyy', new Date());
             const cpi = parseFloat(item.CPI);
-            if (date && !isNaN(cpi)) {
+            const tokenHouseCpi = parseFloat(item['Token house CPI']);  // Parse the "Token house CPI" value
+
+            if (date && !isNaN(cpi) && !isNaN(tokenHouseCpi)) {
                 labels.push(date);
                 cpiData.push(cpi);
+                tokenHouseCpiData.push(tokenHouseCpi);  // Store "Token house CPI" data
             }
         });
 
-        // Calculate Moving Average
+        // Calculate Moving Average (if needed)
         const calculateMovingAverage = (data: number[], windowSize: number) => {
             const result: number[] = [];
             for (let i = 0; i < data.length; i++) {
@@ -84,6 +87,7 @@ const LineGraph: React.FC = () => {
             return result;
         };
 
+        // Datasets for both "CPI" and "Token house CPI"
         const datasets = [
             {
                 label: view === 'movingAverage' ? '7-Day Moving Average CPI' : 'Daily CPI',
@@ -97,8 +101,21 @@ const LineGraph: React.FC = () => {
                 pointHoverBackgroundColor: '#e4302d',
                 pointHoverBorderColor: '#fff',
             },
+            {
+                label: view === 'movingAverage' ? '7-Day Moving Average Token house CPI' : 'Daily Token house CPI',  // Add a label for "Token house CPI"
+                data: view === 'movingAverage' ? calculateMovingAverage(tokenHouseCpiData, 7) : tokenHouseCpiData,  // Add data for "Token house CPI"
+                borderColor: '#008080',
+                fill: false,
+                pointRadius: 4,
+                pointBackgroundColor: '#fff',
+                pointBorderColor: '#008080',
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: '#00CED1',
+                pointHoverBorderColor: '#fff',
+            }
         ];
 
+        // Adding Event Annotations (as before)
         const events = [
             { name: 'RPGF Round 2', startDate: '01-06-2022', endDate: '30-03-2023', color: 'rgba(255,0,0,0.7)' },
             { name: 'RPGF Round 3', startDate: '14-10-2023', endDate: '11-01-2024', color: 'rgba(255,0,0,0.7)' },
@@ -111,7 +128,6 @@ const LineGraph: React.FC = () => {
 
         const annotations: Annotation = {};
 
-        // Adding Event Annotations
         events.forEach((event, index) => {
             const isRPGF = event.name.includes('RPGF');
             const yPosition = isRPGF ? '8%' : '12%';
@@ -150,7 +166,7 @@ const LineGraph: React.FC = () => {
     // Define chart options with types
     const options: ChartOptions<'line'> = {
         plugins: {
-            legend: { display: false },
+            legend: { display: true },
             tooltip: {
                 callbacks: {
                     title: function (tooltipItems) {
@@ -158,9 +174,9 @@ const LineGraph: React.FC = () => {
                     },
                     label: function (tooltipItem) {
                         const value = (tooltipItem.raw as number).toFixed(2);
-                        const label = chartData?.datasets[0].label?.includes('Moving Average')
-                            ? `7-D MACPI - ${value}`
-                            : `CPI - ${value}`;
+                        const label = chartData?.datasets[tooltipItem.datasetIndex].label?.includes('Moving Average')
+                            ? `${chartData?.datasets[tooltipItem.datasetIndex].label} - ${value}`
+                            : `${chartData?.datasets[tooltipItem.datasetIndex].label} - ${value}`;
                         return label;
                     },
                 },
@@ -177,14 +193,12 @@ const LineGraph: React.FC = () => {
                     tooltipFormat: 'yyyy-MM-dd',
                     displayFormats: { day: 'MMM yyyy' },
                 },
-                // title: { display: true, text: 'Date' },
                 ticks: { autoSkip: true, maxTicksLimit: 10 },
             },
             y: {
-                min: 40,
-                max: 320,
-                ticks: { stepSize: 40 },
-                // title: { display: true, text: 'CPI' },
+                min: 0,
+                max: 1000,
+                ticks: { stepSize: 100 },
             },
         },
         responsive: true,
@@ -209,17 +223,13 @@ const LineGraph: React.FC = () => {
                 </label>
             </div>
             {/* Chart Rendering */}
-            <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[550px] py-8 px-4">
+            <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[600px] py-8 px-4">
                 {chartData ? (
-
                     <Line data={chartData} options={options} />
-
-
                 ) : (
                     <p>Loading chart...</p>
                 )}
                 <div className="font-mori font-normal text-xs text-gray-500 text-end pt-4">Last updated on:- <span className='text-black ml-1'>{lastUpdateDate}</span></div>
-
             </div>
 
             <div className='font-mori font-normal max-w-[90%] pt-4 text-xl'>The concentration of power within the collective has been steadily declining with each season and RPGF round.</div>
