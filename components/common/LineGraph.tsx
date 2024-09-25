@@ -90,7 +90,7 @@ const LineGraph: React.FC = () => {
         // Datasets for both "CPI" and "Token house CPI"
         const datasets = [
             {
-                label: view === 'movingAverage' ? '7-Day Moving Average CPI' : 'Daily CPI',
+                label: 'CPI',
                 data: view === 'movingAverage' ? calculateMovingAverage(cpiData, 7) : cpiData,
                 borderColor: '#FF0420',
                 fill: false,
@@ -102,7 +102,7 @@ const LineGraph: React.FC = () => {
                 pointHoverBorderColor: '#fff',
             },
             {
-                label: view === 'movingAverage' ? '7-Day Moving Average Token house CPI' : 'Daily Token house CPI',  // Add a label for "Token house CPI"
+                label: 'Token house CPI',  // Add a label for "Token house CPI"
                 data: view === 'movingAverage' ? calculateMovingAverage(tokenHouseCpiData, 7) : tokenHouseCpiData,  // Add data for "Token house CPI"
                 borderColor: '#008080',
                 fill: false,
