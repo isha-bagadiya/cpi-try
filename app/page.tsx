@@ -3,8 +3,8 @@ import ExpertAnalysis from "@/components/home/ExpertAnalysis";
 import FeaturedDAOChart from "@/components/home/FeaturedDAOChart";
 import HeroSection from "@/components/home/HeroSection";
 import Methodology from "@/components/home/Methodology";
+import Resources from "@/components/home/Resources";
 import WhatIsCPI from "@/components/home/WhatIsCPI";
-
 import Header from "@/components/layout/Header";
 import dynamic from "next/dynamic";
 
@@ -29,6 +29,7 @@ export default function Home() {
           <div>
             <Panels />
           </div>
+          <Resources />
           <AddYourDAO />
           <Footer />
 
