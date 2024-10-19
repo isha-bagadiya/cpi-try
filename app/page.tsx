@@ -1,4 +1,5 @@
 
+import AddPercentage from "@/components/home/AddPercentage";
 import ExpertAnalysis from "@/components/home/ExpertAnalysis";
 import FeaturedDAOChart from "@/components/home/FeaturedDAOChart";
 import HeroSection from "@/components/home/HeroSection";
@@ -22,6 +23,7 @@ export default function Home() {
         <button className="button-50" role="button">Button 50</button> */}
           <Header />
           <HeroSection />
+          <AddPercentage />
           <WhatIsCPI />
           <Methodology />
           <FeaturedDAOChart />

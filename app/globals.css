@@ -87,6 +87,30 @@ body {
   display: flex;
   box-shadow: #957bff 4px 4px 0 0, #000 4px 4px 0 1px;
 }
+
+.button-50[aria-label="add-percentage"] {
+  background: white;
+  background-color: #957bff;
+  color: white;
+  height: max-content;
+  text-transform: capitalize;
+  padding: 10px 20px;
+  letter-spacing: normal;
+  display: flex;
+  box-shadow: white 4px 4px 0 0, #000 4px 4px 0 1px;
+}
+.button-50[aria-label="simulate"] {
+  background: white;
+  background-color: #2FFF6A;
+  color: black;
+  height: max-content;
+  text-transform: capitalize;
+  padding: 13px 60px;
+  letter-spacing: normal;
+  display: flex;
+  box-shadow: white 4px 4px 0 0, #000 4px 4px 0 1px;
+}
+
 .button-50:focus {
   text-decoration: none;
 }
