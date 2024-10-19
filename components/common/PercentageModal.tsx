@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import CPILineGraph from "./CpiLineGraph";
 
 const councilFields = [
   "Token House",
@@ -133,7 +134,10 @@ const PercentageModal: React.FC = () => {
         <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
           <div className="flex flex-wrap items-center gap-[40px] my-[50px]">
             {councilFields.map((field) => (
-              <div key={field} className="flex flex-col items-start space-x-2 mb-2 w-[30%]">
+              <div
+                key={field}
+                className="flex flex-col items-start space-x-2 mb-2 w-[30%]"
+              >
                 <label className=" font-mori font-normal tracking-tighter">
                   {field}
                 </label>
@@ -156,7 +160,9 @@ const PercentageModal: React.FC = () => {
               </div>
             ))}
           </div>
-          <p className="text-xs text-center mb-4 text-[#FEC5FB]">{getRemainingText()}</p>
+          <p className="text-xs text-center mb-4 text-[#FEC5FB]">
+            {getRemainingText()}
+          </p>
           <button
             type="submit"
             aria-label="simulate"
@@ -171,13 +177,14 @@ const PercentageModal: React.FC = () => {
           {error && <p className="text-red-500 mt-4">{error}</p>}
           {success && <p className="text-green-500 mt-4">{success}</p>}
           {cpiResults.length > 0 && (
-            <div className="mt-1">
+            <div className="mt-1 w-full flex flex-col items-center justify-center">
               <h3 className="text-lg font-semibold mb-2">CPI Results:</h3>
               {cpiResults.map((result, index) => (
                 <p key={index} className="text-blue-500">
                   {result.filename}: {result.cpi.toFixed(4)}
                 </p>
               ))}
+              <CPILineGraph cpiResults={cpiResults} />
             </div>
           )}
         </form>
