@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CPILineGraph from "./CpiLineGraph";
 
 const councilFields = [
@@ -27,13 +27,20 @@ const PercentageModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [cpiResults, setCpiResults] = useState<CPIResult[]>([]);
+  const firstInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (firstInputRef.current) {
+      firstInputRef.current.focus();
+    }
+  }, []);
 
   useEffect(() => {
     const total = Object.values(councilPercentages).reduce(
       (sum, value) => sum + (parseFloat(value) || 0),
       0
     );
-    setTotalPercentage(total);
+    setTotalPercentage(Number(total.toFixed(2)));
   }, [councilPercentages]);
 
   const handlePercentageChange = (field: string, value: string) => {
@@ -42,35 +49,6 @@ const PercentageModal: React.FC = () => {
       [field]: value,
     }));
   };
-
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError(null);
-  //   setSuccess(null);
-  //   console.log(councilPercentages);
-  //   try {
-  //     const response = await fetch("/api/council-percentages", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(councilPercentages),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to submit the form");
-  //     }
-
-  //     setSuccess("Percentages submitted successfully!");
-  //     // Optionally reset form fields here
-  //   } catch (err: any) {
-  //     console.error("Failed to submit the form:", err);
-  //     setError(err.message || "Failed to submit the form");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,13 +92,17 @@ const PercentageModal: React.FC = () => {
   };
 
   const remaining = 100 - totalPercentage;
-  const isButtonDisabled = remaining < 0 || loading;
+  const isButtonDisabled = totalPercentage > 100 || loading;
 
   const getRemainingText = () => {
     if (remaining < 0) {
-      return "Total percentage division between all HCCs must be 100%!";
+      return `Total must be 100%, Please adjust ${Math.abs(remaining).toFixed(
+        2
+      )}%`;
+    } else if (remaining > 0) {
+      return `Remaining: ${remaining.toFixed(2)}%`;
     } else {
-      return `Remaining: ${remaining}%`;
+      return "Total: 100%";
     }
   };
 
@@ -128,21 +110,22 @@ const PercentageModal: React.FC = () => {
     <>
       <div className="text-white w-full p-8 relative flex justify-center items-center flex-col">
         {/* Details Form */}
-        <h2 className="text-2.5xl mb-4 font-mori font-semibold mx-auto text-[#FEC5FB]">
-          Add Percentage for HCCs{" "}
-        </h2>
+        <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center my-6 md:my-12">
+          Add Percentage for HCCs
+        </h1>
         <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
-          <div className="flex flex-wrap items-center gap-[40px] my-[50px]">
-            {councilFields.map((field) => (
+          <div className="flex flex-wrap items-center justify-between space-y-4">
+            {councilFields.map((field, index) => (
               <div
                 key={field}
-                className="flex flex-col items-start space-x-2 mb-2 w-[30%]"
+                className="flex flex-col items-start justify-evenly space-y-2 lg:w-[30%] md:w-[28%] sm:w-[42%] w-full"
               >
-                <label className=" font-mori font-normal tracking-tighter">
+                <label className=" font-mori text-md font-bold tracking-tighter">
                   {field}
                 </label>
                 <div className="w-full relative">
                   <input
+                    ref={index === 0 ? firstInputRef : null}
                     className="w-full font-semibold p-4 bg-[#222222] rounded-lg outline-none border-none focus:ring-1 focus:ring-[#FEC5FB]"
                     value={councilPercentages[field] || ""}
                     onChange={(e) =>
@@ -150,17 +133,17 @@ const PercentageModal: React.FC = () => {
                     }
                     min="0"
                     max="100"
-                    placeholder="00"
+                    placeholder="Enter Percentage"
                     required
                   />
-                  <p className="absolute right-2 top-1/2 transform -translate-y-1/2 font-extralight text-xs text-[#FFD366]">
+                  <p className="absolute right-3 top-1/4 transform -translate-y-1/2 font-extralight text-xs text-[#FFD366] my-3">
                     %
                   </p>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-xs text-center mb-4 text-[#FEC5FB]">
+          <p className="text-xs text-center my-4 text-[#FEC5FB]">
             {getRemainingText()}
           </p>
           <button
@@ -174,16 +157,16 @@ const PercentageModal: React.FC = () => {
             {loading ? "Simulating..." : "Simulate"}
           </button>
 
-          {error && <p className="text-red-500 mt-4">{error}</p>}
-          {success && <p className="text-green-500 mt-4">{success}</p>}
+          {error && <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>}
+          {/* {success && <p className="text-green-500 mt-4">{success}</p>} */}
           {cpiResults.length > 0 && (
             <div className="mt-1 w-full flex flex-col items-center justify-center">
-              <h3 className="text-lg font-semibold mb-2">CPI Results:</h3>
-              {cpiResults.map((result, index) => (
+              {/* <h3 className="text-lg font-semibold mb-2">CPI Results:</h3> */}
+              {/* {cpiResults.map((result, index) => (
                 <p key={index} className="text-blue-500">
                   {result.filename}: {result.cpi.toFixed(4)}
                 </p>
-              ))}
+              ))} */}
               <CPILineGraph cpiResults={cpiResults} />
             </div>
           )}

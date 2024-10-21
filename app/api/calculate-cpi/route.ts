@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     const percentages = await request.json() as CouncilPercentages;
 
     // Read and parse CSV files
-    const csvFiles = ['file1.csv', 'file2.csv', 'file3.csv'];
+    const csvFiles = ['2022-06-08.csv', '2023-03-01.csv', '2023-06-19.csv', '2023-12-04.csv', '2024-10-14.csv', '2024-10-15.csv', '2024-10-16.csv'];
     const results = [];
 
     for (const file of csvFiles) {

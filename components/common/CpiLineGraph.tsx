@@ -1,5 +1,5 @@
-import React from 'react';
-import { Line } from 'react-chartjs-2';
+import React from "react";
+import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,8 +8,9 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
-} from 'chart.js';
+  Legend,
+  ChartOptions,
+} from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -26,50 +27,62 @@ type CPIResult = {
   cpi: number;
 };
 
-const CPILineGraph: React.FC<{ cpiResults: CPIResult[] }> = ({ cpiResults }) => {
+const CPILineGraph: React.FC<{ cpiResults: CPIResult[] }> = ({
+  cpiResults,
+}) => {
   const data = {
-    labels: cpiResults.map(result => result.filename),
+    labels: cpiResults.map((result) => result.filename),
     datasets: [
       {
-        label: 'CPI',
-        data: cpiResults.map(result => result.cpi),
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        label: "CPI",
+        data: cpiResults.map((result) => result.cpi),
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.5)",
       },
     ],
   };
 
-  const options = {
-    responsive: true,
+  const options: ChartOptions<"line"> = {
     plugins: {
       legend: {
-        position: 'top' as const,
+        display: true,
+        // position: "top" as const,
       },
       title: {
         display: true,
-        text: 'CPI Results',
+        text: "CPI Results",
       },
     },
     scales: {
       x: {
         title: {
           display: true,
-          text: 'Filename'
-        }
+          text: "Filename",
+        },
+        ticks: { autoSkip: true, maxTicksLimit: 10 },
       },
       y: {
         title: {
           display: true,
-          text: 'CPI'
+          text: "CPI",
         },
-        beginAtZero: true
-      }
-    }
+        beginAtZero: true,
+      },
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+
+    animation: {
+      duration: 2000,
+      easing: "easeOutQuart",
+    },
   };
 
   return (
-    <div className="w-full h-[400px]">
-      <Line data={data} options={options} />
+    <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full ">
+      <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[500px] py-8 px-4">
+        <Line data={data} options={options} />
+      </div>
     </div>
   );
 };
