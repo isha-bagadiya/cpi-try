@@ -1,6 +1,5 @@
 'use client'
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useMemo } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -12,13 +11,21 @@ import {
     ChartOptions,
 } from 'chart.js';
 import 'tailwindcss/tailwind.css';
+import dynamic from 'next/dynamic';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
+
+// Dynamically import Bar component with SSR disabled
+const Bar = dynamic(
+    () => import('react-chartjs-2').then(mod => mod.Bar),
+    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+);
+
 const CPIChartofDAOs: React.FC = () => {
     // Data for the CPI of different platforms
-    const data = {
+    const data = useMemo(() => ({
         labels: ['Optimism', 'Compound', 'Aave', 'Uniswap'],
         datasets: [
             {
@@ -28,10 +35,10 @@ const CPIChartofDAOs: React.FC = () => {
                 borderWidth: 1,
             },
         ],
-    };
+    }), []);
 
     // Chart options
-    const options: ChartOptions<'bar'> = {
+    const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
         plugins: {
             legend: {
@@ -63,7 +70,7 @@ const CPIChartofDAOs: React.FC = () => {
                 },
             },
         },
-    };
+    }), []);
 
     return (
 
@@ -71,7 +78,6 @@ const CPIChartofDAOs: React.FC = () => {
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Featured DAOs CPI</h2>
             <div className="bg-white shadow-lg rounded-lg p-5 w-full max-w-4xl">
                 {/* Header Section */}
-
 
                 {/* Chart Rendering */}
                 {data ? (
@@ -81,8 +87,13 @@ const CPIChartofDAOs: React.FC = () => {
                 ) : (
                     <p>Loading chart...</p>
                 )}
+                <time
+                    dateTime="2024-08-27"
+                    className="font-mori font-normal text-xs text-gray-500 text-end block pt-4"
+                >
+                    Last updated on:- <span className="text-black ml-1">27 August 2024</span>
+                </time>
 
-                <div className="font-mori font-normal text-xs text-gray-500 text-end pt-4">Last updated on:- <span className='text-black ml-1'>27 August 2024</span></div>
             </div>
 
         </div>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
+import arrow from "@/public/assets/images/pixelarticons_arrow-up.png";
 
 interface Resource {
     title: string
@@ -72,8 +72,15 @@ const Resources: React.FC = () => {
                                     href={resource.accessUrl}
                                     target="_blank"
                                 >
-                                    <span className='ml-2 drop-shadow-custom' >Explore</span>
-                                    <Image src={arrow} alt='arrow icon' className='border border-white rounded-full bg-[#FF0E00] p-1' width={30} height={30} />
+                                    <span className='ml-2 drop-shadow-custom text-black font-semibold' >Explore</span>
+                                    <Image
+                                        src={arrow}
+                                        alt='arrow icon'
+                                        className='border border-white rounded-full bg-[#FF0E00] p-1'
+                                        width={30}
+                                        height={30}
+                                        loading="lazy"
+                                    />
                                 </Link>
                             </div>
                         </div>

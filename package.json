@@ -23,7 +23,6 @@
     "ethers": "^6.13.2",
     "gsap": "^3.12.5",
     "katex": "^0.16.11",
-    "leva": "^0.9.34",
     "mongodb": "^6.8.1",
     "next": "14.2.7",
     "raw-loader": "^4.0.2",
@@ -32,6 +31,7 @@
     "react-dom": "^18",
     "react-loading-skeleton": "^3.4.0",
     "react-tooltip": "^5.28.0",
+    "swr": "^2.2.5",
     "three": "^0.165.0",
     "three-custom-shader-material": "^5.4.0",
     "usehooks-ts": "^3.1.0"

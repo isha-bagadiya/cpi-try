@@ -1,13 +1,20 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import { Line } from 'react-chartjs-2';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+// import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, ChartData, ChartOptions } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { parse, format } from 'date-fns';
+import dynamic from 'next/dynamic';
+import useSWR from 'swr';
 
 ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, annotationPlugin);
+
+const Line = dynamic(
+    () => import('react-chartjs-2').then(mod => mod.Line),
+    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+);
 
 // Define types for Event and Annotation
 interface Event {
@@ -32,38 +39,59 @@ interface CPIData {
     CPI: string;
 }
 
+//fetcher function to fetch the data on the server only
+const fetcher = (url: string) => fetch(url).then(async (res) => {
+    const data: CPIData[] = await res.json();
+    return data
+});
+
 const LineGraph: React.FC = () => {
-    const [chartData, setChartData] = useState<CustomChartData | null>(null);
+    // const [chartData, setChartData] = useState<CustomChartData | null>(null);
+    const { data: fetchedData, error } = useSWR<CPIData[]>('/daily_hhi_cpi.json', fetcher);
     const [view, setView] = useState<'daily' | 'movingAverage'>('daily');
     const [lastUpdateDate, setLastUpdateDate] = useState<string>('');
 
     // Fetch and process data
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch('/daily_hhi_cpi.json');
-                const data: CPIData[] = await response.json();
-                const formattedData = parseJSON(data);
-                console.log("formattedData", formattedData)
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         try {
+    //             const response = await fetch('/daily_hhi_cpi.json');
+    //             const data: CPIData[] = await response.json();
+    //             const formattedData = parseJSON(data);
+    //             console.log("formattedData", formattedData)
 
-                const lastDate = formattedData.labels[formattedData.labels.length - 1] as Date;
-                setLastUpdateDate(lastDate ? format(lastDate, 'dd MMMM yyyy') : 'N/A');
-                setChartData(formattedData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+    //             const lastDate = formattedData.labels[formattedData.labels.length - 1] as Date;
+    //             setLastUpdateDate(lastDate ? format(lastDate, 'dd MMMM yyyy') : 'N/A');
+    //             setChartData(formattedData);
+    //         } catch (error) {
+    //             console.error('Error fetching data:', error);
+    //         }
+    //     };
 
-        fetchData();
-    }, [view]);
+    //     fetchData();
+    // }, [view]);
+
+
+    const calculateMovingAverage = useCallback((data: number[], windowSize: number) => {
+        const result: number[] = [];
+        for (let i = 0; i < data.length; i++) {
+            const window = data.slice(Math.max(0, i - windowSize + 1), i + 1);
+            const average = window.reduce((sum, value) => sum + value, 0) / window.length;
+            result.push(average);
+        }
+        return result;
+    }, []);
+
 
     // Function to parse and process the JSON data
-    const parseJSON = (data: CPIData[]) => {
+    const chartData = useMemo(() => {
         const labels: Date[] = [];
         const cpiData: number[] = [];
         const tokenHouseCpiData: number[] = [];  // Add an array for "Token house CPI" data
 
-        data.forEach((item) => {
+        if (!fetchedData) return null;
+
+        fetchedData.forEach((item: CPIData) => {
             // Update the format from "dd-MM-yyyy" to "MM-dd-yyyy"
             const date = parse(item.date, 'MM-dd-yyyy', new Date());
             const cpi = parseFloat(item.CPI);
@@ -75,17 +103,6 @@ const LineGraph: React.FC = () => {
                 tokenHouseCpiData.push(tokenHouseCpi);  // Store "Token house CPI" data
             }
         });
-
-        // Calculate Moving Average (if needed)
-        const calculateMovingAverage = (data: number[], windowSize: number) => {
-            const result: number[] = [];
-            for (let i = 0; i < data.length; i++) {
-                const window = data.slice(Math.max(0, i - windowSize + 1), i + 1);
-                const average = window.reduce((sum, value) => sum + value, 0) / window.length;
-                result.push(average);
-            }
-            return result;
-        };
 
         // Datasets for both "CPI" and "Token house CPI"
         const datasets = [
@@ -156,28 +173,31 @@ const LineGraph: React.FC = () => {
             };
         });
 
+        const lastDate = labels[labels.length - 1] || null;
+        setLastUpdateDate(lastDate ? format(lastDate, 'dd MMMM yyyy') : 'N/A');
+
         return {
             labels,
             datasets,
             annotations,
         };
-    };
+    }, [fetchedData, view]);
 
     // Define chart options with types
-    const options: ChartOptions<'line'> = {
+    const options = useMemo<ChartOptions<'line'>>(() => ({
         plugins: {
             legend: { display: true },
             tooltip: {
                 callbacks: {
-                    title: function (tooltipItems) {
-                        return `Date - ${format(new Date(tooltipItems[0].label as string), 'yyyy-MM-dd')}`;
+                    title: (tooltipItems) => {
+                        const label = tooltipItems[0]?.label as string;
+                        return `Date - ${format(new Date(label), 'yyyy-MM-dd')}`;
                     },
-                    label: function (tooltipItem) {
+                    label: (tooltipItem) => {
+                        const dataset = chartData?.datasets?.[tooltipItem.datasetIndex];
                         const value = (tooltipItem.raw as number).toFixed(2);
-                        const label = chartData?.datasets[tooltipItem.datasetIndex].label?.includes('Moving Average')
-                            ? `${chartData?.datasets[tooltipItem.datasetIndex].label} - ${value}`
-                            : `${chartData?.datasets[tooltipItem.datasetIndex].label} - ${value}`;
-                        return label;
+                        const label = dataset?.label || '';
+                        return `${label} - ${value}`;
                     },
                 },
             },
@@ -207,20 +227,27 @@ const LineGraph: React.FC = () => {
             duration: 2000,
             easing: 'easeOutQuart',
         },
-    };
+    }), [chartData]);
+
+    if (error) return <div>Error loading data...</div>;
 
     return (
         <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">
             {/* Header Section */}
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Optimism CPI Over Time </h2>
             <div className="border border-gray-300 flex justify-center items-center mb-4 self-end rounded-lg">
-                <label>
-                    <span className='hidden'> Optimism CPI Over Time</span>
-                    <select className="px-2 py-2 font-mori font-normal text-sm bg-dark-gray rounded-lg" onChange={(e) => setView(e.target.value as 'daily' | 'movingAverage')} value={view}>
-                        <option value="daily">Daily CPI</option>
-                        <option value="movingAverage">7-Day Moving Average</option>
-                    </select>
-                </label>
+                <label htmlFor="cpi-view-selector" className="sr-only">Optimism CPI Over Time</label>
+                <select
+                    id="cpi-view-selector"
+                    className="px-2 py-2 font-mori font-normal text-sm bg-dark-gray rounded-lg"
+                    onChange={(e) => setView(e.target.value as 'daily' | 'movingAverage')}
+                    value={view}
+                    aria-label="Select CPI view"
+                    aria-live="polite"
+                >
+                    <option value="daily">Daily CPI</option>
+                    <option value="movingAverage">7-Day Moving Average</option>
+                </select>
             </div>
             {/* Chart Rendering */}
             <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[600px] py-8 px-4">

@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
+import React, { useMemo } from 'react';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -13,12 +12,19 @@ import {
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import 'chartjs-adapter-date-fns';
+import dynamic from 'next/dynamic';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
+// Dynamically import Bar component with SSR disabled
+const Bar = dynamic(
+    () => import('react-chartjs-2').then(mod => mod.Bar),
+    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+);
+
 const CPIChartForOP: React.FC = () => {
     // CPI Data
-    const data = {
+    const data = useMemo(() => ({
         labels: [
             'Token House',
             'Round 2 & Season 3',
@@ -36,10 +42,10 @@ const CPIChartForOP: React.FC = () => {
                 borderWidth: 1,
             },
         ],
-    };
+    }), []);
 
     // Chart options with annotations for start dates
-    const options: ChartOptions<'bar'> = {
+    const options: ChartOptions<'bar'> = useMemo(() => ({
         responsive: true,
         plugins: {
             legend: {
@@ -147,7 +153,7 @@ const CPIChartForOP: React.FC = () => {
                 },
             },
         },
-    };
+    }), []);
 
     return (
 
@@ -155,19 +161,16 @@ const CPIChartForOP: React.FC = () => {
         <div className="container mx-auto flex flex-col items-center justify-center my-10 p-3 pb-8">
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Key Insights and Trends</h2>
             <div className="bg-white shadow-lg rounded-lg p-5 w-full max-w-4xl">
-                {/* Header Section */}
+                <div className="relative w-full bg-white rounded-lg py-8 px-2">
+                    <Bar data={data} options={options} />
+                </div>
 
-
-                {/* Chart Rendering */}
-                {data ? (
-                    <div className="relative w-full bg-white rounded-lg py-8 px-2">
-                        <Bar data={data} options={options} />
-                    </div>
-                ) : (
-                    <p>Loading chart...</p>
-                )}
-
-                <div className="font-mori font-normal text-xs text-gray-500 text-end pt-4">Last updated on:- <span className='text-black ml-1'>27 August 2024</span></div>
+                <time
+                    dateTime="2024-08-27"
+                    className="font-mori font-normal text-xs text-gray-500 text-end block pt-4"
+                >
+                    Last updated on:- <span className="text-black ml-1">27 August 2024</span>
+                </time>
             </div>
 
         </div>
