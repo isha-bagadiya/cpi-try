@@ -36,7 +36,7 @@ interface CustomChartData extends ChartData<'line'> {
 // Define the shape of the CPI Data
 interface CPIData {
     date: string;
-    'Token house CPI': string;
+    HHI: string;
     CPI: string;
 }
 
@@ -96,7 +96,7 @@ const LineGraph: React.FC = () => {
             // Update the format from "dd-MM-yyyy" to "MM-dd-yyyy"
             const date = parse(item.date, 'MM-dd-yyyy', new Date());
             const cpi = parseFloat(item.CPI);
-            const tokenHouseCpi = parseFloat(item['Token house CPI']);  // Parse the "Token house CPI" value
+            const tokenHouseCpi = parseFloat(item['HHI']);  // Parse the "Token house CPI" value
 
             if (date && !isNaN(cpi) && !isNaN(tokenHouseCpi)) {
                 labels.push(date);
