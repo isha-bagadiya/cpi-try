@@ -79,10 +79,8 @@ const CPILineGraph: React.FC<{ cpiResults: CPIResult[] }> = ({
   };
 
   return (
-    <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full ">
-      <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[500px] py-8 px-4">
-        <Line data={data} options={options} />
-      </div>
+    <div className="w-full bg-white border border-gray-300 rounded-lg h-[500px] p-4 overflow-x-auto">
+      <Line data={data} options={options} />
     </div>
   );
 };
