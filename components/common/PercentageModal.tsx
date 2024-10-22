@@ -59,15 +59,15 @@ const PercentageModal: React.FC = () => {
 
     try {
       // Submit percentages
-      const percentagesResponse = await fetch("/api/council-percentages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(councilPercentages),
-      });
+      // const percentagesResponse = await fetch("/api/council-percentages", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(councilPercentages),
+      // });
 
-      if (!percentagesResponse.ok) {
-        throw new Error("Failed to submit percentages");
-      }
+      // if (!percentagesResponse.ok) {
+      //   throw new Error("Failed to submit percentages");
+      // }
 
       // Calculate CPI
       const cpiResponse = await fetch("/api/calculate-cpi", {
@@ -157,16 +157,11 @@ const PercentageModal: React.FC = () => {
             {loading ? "Simulating..." : "Simulate"}
           </button>
 
-          {error && <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>}
-          {/* {success && <p className="text-green-500 mt-4">{success}</p>} */}
+          {error && (
+            <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>
+          )}
           {cpiResults.length > 0 && (
-            <div className="mt-1 w-full flex flex-col items-center justify-center">
-              {/* <h3 className="text-lg font-semibold mb-2">CPI Results:</h3> */}
-              {/* {cpiResults.map((result, index) => (
-                <p key={index} className="text-blue-500">
-                  {result.filename}: {result.cpi.toFixed(4)}
-                </p>
-              ))} */}
+            <div className="mt-8 w-[90%] mx-auto flex items-center justify-center">
               <CPILineGraph cpiResults={cpiResults} />
             </div>
           )}
