@@ -1,26 +1,19 @@
 'use client';
+
 import React, { useMemo } from 'react';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
     ChartOptions,
 } from 'chart.js';
-import annotationPlugin from 'chartjs-plugin-annotation';
 import 'chartjs-adapter-date-fns';
-import dynamic from 'next/dynamic';
+import ChartWrapper from './ChartWrapper';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
+// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
 // Dynamically import Bar component with SSR disabled
-const Bar = dynamic(
-    () => import('react-chartjs-2').then(mod => mod.Bar),
-    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
-);
+// const Bar = dynamic(
+//     () => import('react-chartjs-2').then(mod => mod.Bar),
+//     { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+// );
 
 const CPIChartForOP: React.FC = () => {
     // CPI Data
@@ -156,13 +149,11 @@ const CPIChartForOP: React.FC = () => {
     }), []);
 
     return (
-
-
         <div className="container mx-auto flex flex-col items-center justify-center my-10 p-3 pb-8">
             <h2 className='font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]'>Key Insights and Trends</h2>
             <div className="bg-white shadow-lg rounded-lg p-5 w-full max-w-4xl">
                 <div className="relative w-full bg-white rounded-lg py-8 px-2">
-                    <Bar data={data} options={options} />
+                    <ChartWrapper data={data} type='bar' options={options} />
                 </div>
 
                 <time

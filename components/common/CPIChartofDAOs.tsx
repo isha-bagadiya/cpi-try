@@ -1,27 +1,21 @@
 'use client'
 import React, { useMemo } from 'react';
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
     ChartOptions,
 } from 'chart.js';
 import 'tailwindcss/tailwind.css';
-import dynamic from 'next/dynamic';
+// import dynamic from 'next/dynamic';
+import ChartWrapper from './ChartWrapper';
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+// ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 
 // Dynamically import Bar component with SSR disabled
-const Bar = dynamic(
-    () => import('react-chartjs-2').then(mod => mod.Bar),
-    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
-);
+// const Bar = dynamic(
+//     () => import('react-chartjs-2').then(mod => mod.Bar),
+//     { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+// );
 
 const CPIChartofDAOs: React.FC = () => {
     // Data for the CPI of different platforms
@@ -82,7 +76,7 @@ const CPIChartofDAOs: React.FC = () => {
                 {/* Chart Rendering */}
                 {data ? (
                     <div className="relative w-full bg-white border border-dark-gray rounded-lg  py-8 px-2">
-                        <Bar data={data} />
+                        <ChartWrapper data={data} type='bar' options={options} />
                     </div>
                 ) : (
                     <p>Loading chart...</p>

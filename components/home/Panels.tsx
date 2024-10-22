@@ -10,51 +10,37 @@ const Panels: React.FC = () => {
     const component = useRef<HTMLDivElement>(null); // Component ref
     const slider = useRef<HTMLDivElement>(null); // Slider/container ref
 
+
     useGSAP(() => {
-        // Use GSAP's matchMedia for responsive animations
-        let ctx = gsap.context(() => {
-            let panels = gsap.utils.toArray(".panel") as HTMLElement[];
+        const mm = gsap.matchMedia()
+        let panels = gsap.utils.toArray(".panel") as HTMLElement[];
+        const createAnimation = (end: string) => {
+            return gsap.to(panels, {
+                xPercent: -100 * (panels.length - 1),
+                ease: "none",
+                scrollTrigger: {
+                    trigger: slider.current,
+                    pin: true,
+                    scrub: 1,
+                    snap: 1 / (panels.length - 1),
+                    end,
+                    markers: false,
+                },
+            })
+        }
 
-            // Media queries for responsiveness
-            let mm = gsap.matchMedia();
+        mm.add("(min-width: 768px)", () => {
+            return createAnimation("+=" + slider.current!.offsetWidth)
+        })
 
-            mm.add("(min-width: 768px)", () => {
-                // Desktop/Tablet version - larger screens
-                gsap.to(panels, {
-                    xPercent: -100 * (panels.length - 1), // Move horizontally
-                    ease: "none", // No easing for continuous scroll
-                    scrollTrigger: {
-                        trigger: slider.current, // The slider container is the scroll trigger
-                        pin: true, // Pin the container
-                        scrub: 1, // Smooth scrolling
-                        snap: 1 / (panels.length - 1), // Snap to each panel
-                        end: () => "+=" + slider.current!.offsetWidth, // End after the width of all panels is scrolled
-                        markers: false, // Remove markers for production
-                    },
-                });
-            });
+        mm.add("(max-width: 767px)", () => {
+            return createAnimation("+=" + slider.current!.scrollWidth)
+        })
 
-            mm.add("(max-width: 767px)", () => {
-                // Mobile version
-                gsap.to(panels, {
-                    xPercent: -100 * (panels.length - 1), // Move horizontally
-                    ease: "none", // No easing for continuous scroll
-                    scrollTrigger: {
-                        trigger: slider.current, // The slider container is the scroll trigger
-                        pin: true, // Pin the container
-                        scrub: 1, // Smooth scrolling
-                        snap: 1 / (panels.length - 1), // Snap to each panel
-                        end: () => "+=" + slider.current!.scrollWidth, // End after the width of all panels is scrolled
-                        markers: false, // Remove markers for production
-                    },
-                });
-            });
-
-        }, component);
-
-        // Cleanup on component unmount
-        return () => ctx.revert();
-    }, { scope: component });
+        return () => {
+            mm.revert()
+        }
+    }, { scope: component })
 
 
     return (
@@ -70,14 +56,6 @@ const Panels: React.FC = () => {
                         </p>
                     </div>
                 </div>
-                {/* <div className="panel min-w-[100vw] h-screen p-10 md:p-20 flex flex-col justify-center ">
-                    <div className="container  mx-auto">
-                        <div className="p-5 mb-8 bg-custom-pink rounded-xl w-max max-w-[80%]">
-                            <h2 className="font-mori text-black text-[5vw] md:text-[3vw] leading-10 tracking-tighter font-bold">Modified Herfindahl-Hirschman Index (CPI)</h2>
-                        </div>
-                        <p className="font-mori font-normal tracking-tight text-xl md:text-[2vw] leading-6 md:leading-10 mt-8">The Modified Herfindahl-Hirschman Index (CPI) is a variation of the traditional HHI, specifically adapted to measure power concentration in DAOs like the Optimism Collective. The CPI considers both the voting power of delegates and the influence exerted by various governance bodies. By calculating the weighted sum of squared voting power, it captures the level of decentralization, with a higher CPI indicating more concentration (less decentralization) and a lower CPI indicating greater decentralization.</p>
-                    </div>
-                </div> */}
                 <div className="panel min-w-[100vw] h-screen p-10 md:p-20 flex flex-col justify-center">
                     <div className="container  mx-auto">
                         <div className="p-5 mb-8 bg-custom-orange rounded-xl w-max max-w-[80%]">
