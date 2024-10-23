@@ -150,28 +150,54 @@ async function parseCSV(filePath: string): Promise<any[]> {
 }
 
 function calculateCPI(
-  data: any[], 
-  percentages: CouncilPercentages, 
-  redistributedPercentages: Record<string, number>
+  data: any[],
+  percentages: CouncilPercentages,
+  redistributedPercentages: Record<string, number>,
+  activeCouncils: Set<string> // Add activeCouncils parameter
 ): number {
   return data.reduce((sum, delegate) => {
     // Get the redistributed percentage for each council, falling back to 0 if council is inactive
     const tokenHousePercentage = redistributedPercentages["Token House"] || 0;
-    const citizenHousePercentage = redistributedPercentages["Citizen House"] || 0;
-    const grantsCouncilPercentage = redistributedPercentages["Grants Council"] || 0;
-    const grantsMMPercentage = redistributedPercentages["Grants Council (Milestone & Metrics Sub-committee)"] || 0;
-    const securityCouncilPercentage = redistributedPercentages["Security Council"] || 0;
-    const cocPercentage = redistributedPercentages["Code of Conduct Council"] || 0;
-    const dabPercentage = redistributedPercentages["Developer Advisory Board"] || 0;
+    const citizenHousePercentage =
+      redistributedPercentages["Citizen House"] || 0;
+    const grantsCouncilPercentage =
+      redistributedPercentages["Grants Council"] || 0;
+    const grantsMMPercentage =
+      redistributedPercentages[
+        "Grants Council (Milestone & Metrics Sub-committee)"
+      ] || 0;
+    const securityCouncilPercentage =
+      redistributedPercentages["Security Council"] || 0;
+    const cocPercentage =
+      redistributedPercentages["Code of Conduct Council"] || 0;
+    const dabPercentage =
+      redistributedPercentages["Developer Advisory Board"] || 0;
+
+    // Helper function to get the correct council value based on active councils
+    const getCouncilValue = (councilKeys: string[]): number => {
+      const activeKey = councilKeys.find((key) => activeCouncils.has(key));
+      return activeKey ? parseFloat(delegate[activeKey]) || 0 : 0;
+    };
 
     const influence =
+      // Token House is always th_vp
       (parseFloat(delegate.th_vp) || 0) * (tokenHousePercentage / 100) +
-      (parseFloat(delegate.ch_vp_r4) || 0) * (citizenHousePercentage / 100) +
-      (parseFloat(delegate.gc_vp_s6) || 0) * (grantsCouncilPercentage / 100) +
-      (parseFloat(delegate.gc_vp_mm_s6) || 0) * (grantsMMPercentage / 100) +
-      (parseFloat(delegate.sc_vp_s6) || 0) * (securityCouncilPercentage / 100) +
-      (parseFloat(delegate.coc_vp_s6) || 0) * (cocPercentage / 100) +
-      (parseFloat(delegate.dab_vp_s6) || 0) * (dabPercentage / 100);
+      // Citizen House - check which round is active
+      getCouncilValue(["ch_vp_r2", "ch_vp_r3", "ch_vp_r4"]) *
+        (citizenHousePercentage / 100) +
+      // Grants Council - check which season is active
+      getCouncilValue(["gc_vp_s3", "gc_vp_s4", "gc_vp_s5", "gc_vp_s6"]) *
+        (grantsCouncilPercentage / 100) +
+      // Grants Council MM - check which season is active
+      getCouncilValue(["gc_vp_mm_s5", "gc_vp_mm_s6"]) *
+        (grantsMMPercentage / 100) +
+      // Security Council - check which season is active
+      getCouncilValue(["sc_vp_s5", "sc_vp_s6"]) *
+        (securityCouncilPercentage / 100) +
+      // Code of Conduct Council - check which season is active
+      getCouncilValue(["coc_vp_s5", "coc_vp_s6"]) * (cocPercentage / 100) +
+      // Developer Advisory Board - check which season is active
+      getCouncilValue(["dab_vp_s5", "dab_vp_s6"]) * (dabPercentage / 100);
 
     return sum + Math.pow(influence, 2);
   }, 0);
@@ -186,48 +212,6 @@ function getActiveCouncils(filename: string): Set<string> {
   }
   return new Set();
 }
-
-function findMatchingCouncilKey(
-  displayName: string,
-  activeCouncils: Set<string>
-): string | null {
-  const mapping = councilMappings.find((m) => m.displayName === displayName);
-  if (!mapping) return null;
-
-  // Find the first active key for this council
-  return mapping.keys.find((key) => activeCouncils.has(key)) || null;
-}
-
-// function calculateCouncilPercentages(activeCouncils: Set<string>, percentages: CouncilPercentages): { active: number, inactive: number } {
-//   let activeTotal = 0;
-//   let inactiveTotal = 0;
-
-//   for (const [council, percentage] of Object.entries(percentages)) {
-//     // Convert percentage to number explicitly
-//     const percentageValue = Number(percentage);
-
-//     // Find the matching active key for this council
-//     const mapping = councilMappings.find(m => m.displayName === council);
-//     if (!mapping) continue;
-
-//     // Check if any of the council's keys are in the active set
-//     const isActive = mapping.keys.some(key => activeCouncils.has(key));
-
-//     if (isActive) {
-//       activeTotal += percentageValue;
-//       console.log(`Council ${council} is active: ${percentageValue}%`);
-//     } else {
-//       inactiveTotal += percentageValue;
-//       console.log(`Council ${council} is inactive: ${percentageValue}%`);
-//     }
-//   }
-
-//   // Round to 2 decimal places to avoid floating point issues
-//   return {
-//     active: Number(activeTotal.toFixed(2)),
-//     inactive: Number(inactiveTotal.toFixed(2))
-//   };
-// }
 
 function calculateCouncilPercentages(
   activeCouncils: Set<string>,
@@ -306,9 +290,12 @@ export async function POST(request: NextRequest) {
         activeCouncils,
         percentages
       );
-
-      // Use redistributed percentages in CPI calculation
-      const cpi = calculateCPI(data, percentages, councilPercentages.redistributed);
+      const cpi = calculateCPI(
+        data,
+        percentages,
+        councilPercentages.redistributed,
+        activeCouncils
+      );
 
       console.log(`\nFile: ${file}`);
       console.log("Active councils:", Array.from(activeCouncils));
@@ -317,6 +304,8 @@ export async function POST(request: NextRequest) {
         councilPercentages.originalPercentages
       );
       console.log("Inactive total:", councilPercentages.inactive);
+      console.log("Active total:", councilPercentages.active);
+
       console.log(
         "Redistributed percentages:",
         councilPercentages.redistributed
