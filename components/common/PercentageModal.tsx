@@ -29,11 +29,14 @@ const PercentageModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [cpiResults, setCpiResults] = useState<CPIResult[]>([]);
-  const firstInputRef = useRef<HTMLInputElement>(null);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    if (firstInputRef.current) {
-      firstInputRef.current.focus();
+    // Initialize the refs array
+    inputRefs.current = councilFields.map(() => null);
+    // Focus the first input on mount
+    if (inputRefs.current[0]) {
+      inputRefs.current[0].focus();
     }
   }, []);
 
@@ -44,6 +47,24 @@ const PercentageModal: React.FC = () => {
     );
     setTotalPercentage(Number(total.toFixed(2)));
   }, [councilPercentages]);
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    currentIndex: number
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      // Move to next input if available
+      if (currentIndex < councilFields.length - 1) {
+        inputRefs.current[currentIndex + 1]?.focus();
+      } else {
+        // If it's the last input, submit the form
+        if (!isButtonDisabled) {
+          handleSubmit(e as unknown as React.FormEvent);
+        }
+      }
+    }
+  };
 
   const handlePercentageChange = (field: string, value: string) => {
     setCouncilPercentages((prev) => ({
@@ -117,12 +138,15 @@ const PercentageModal: React.FC = () => {
                 </label>
                 <div className="w-full relative">
                   <input
-                    ref={index === 0 ? firstInputRef : null}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                     className="w-full font-semibold p-4 bg-[#222222] rounded-lg outline-none border-none focus:ring-1 focus:ring-[#FEC5FB]"
                     value={councilPercentages[field] || ""}
                     onChange={(e) =>
                       handlePercentageChange(field, e.target.value)
                     }
+                    onKeyDown={(e) => handleKeyDown(e, index)}
                     min="0"
                     max="100"
                     placeholder="Enter Percentage"
