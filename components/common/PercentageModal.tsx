@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import CPILineGraph from "./CpiLineGraph";
+import sidebg from "@/public/influencepagesideimage.svg";
+import Image from "next/image";
 
 const councilFields = [
   "Token House",
@@ -58,17 +60,6 @@ const PercentageModal: React.FC = () => {
     setCpiResults([]);
 
     try {
-      // Submit percentages
-      // const percentagesResponse = await fetch("/api/council-percentages", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(councilPercentages),
-      // });
-
-      // if (!percentagesResponse.ok) {
-      //   throw new Error("Failed to submit percentages");
-      // }
-
       // Calculate CPI
       const cpiResponse = await fetch("/api/calculate-cpi", {
         method: "POST",
@@ -92,7 +83,8 @@ const PercentageModal: React.FC = () => {
   };
 
   const remaining = 100 - totalPercentage;
-  const isButtonDisabled = totalPercentage > 100 || loading;
+  const isButtonDisabled =
+    totalPercentage > 100 || totalPercentage < 100 || loading;
 
   const getRemainingText = () => {
     if (remaining < 0) {
@@ -108,9 +100,9 @@ const PercentageModal: React.FC = () => {
 
   return (
     <>
-      <div className="text-white w-full p-8 relative flex justify-center items-center flex-col">
+      <div className="text-white w-full h-max p-8 pt-0 relative flex justify-center items-center flex-col bg-dark-gray overflow-x-hidden overflow-y-hidden">
         {/* Details Form */}
-        <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center my-6 md:my-12">
+        <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center mb-6 md:mb-12">
           Add Percentage for HCCs
         </h1>
         <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
@@ -143,7 +135,7 @@ const PercentageModal: React.FC = () => {
               </div>
             ))}
           </div>
-          <p className="text-xs text-center my-4 text-[#FEC5FB]">
+          <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
             {getRemainingText()}
           </p>
           <button
@@ -157,9 +149,13 @@ const PercentageModal: React.FC = () => {
             {loading ? "Simulating..." : "Simulate"}
           </button>
 
+          <div className="absolute -right-[100px] top-[380px] h-[300px] w-[300px] overflow-hidden hidden sm:flex items-center justify-center">
+            <Image src={sidebg} alt="sidebg" className="w-full h-auto"></Image>
+          </div>
           {error && (
             <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>
           )}
+
           {cpiResults.length > 0 && (
             <div className="mt-8 w-[90%] mx-auto flex items-center justify-center">
               <CPILineGraph cpiResults={cpiResults} />
