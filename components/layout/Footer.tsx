@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-import img2 from "@/public/assets/images/white-logo-icon.svg";
+import img2 from "@/public/assets/images/white-logo-icon.png";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import ContactModal from "../ui/ContactModal";
@@ -40,7 +40,12 @@ const Footer: React.FC = () => {
                         </div>
                     </div>
                     <div className="mt-10 md:mt-auto">
-                        <Image src={img2} width={100} alt="white logo icon" />
+                        <Image
+                            src={img2}
+                            width={100}
+                            alt="white logo icon"
+                            loading="lazy"
+                        />
                     </div>
                 </div>
             </div>

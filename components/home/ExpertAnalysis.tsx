@@ -1,5 +1,3 @@
-import Image from "next/image";
-import img1 from "@/public/assets/images/expertAnalysis.svg"
 
 const ExpertAnalysis: React.FC = () => {
     return <>

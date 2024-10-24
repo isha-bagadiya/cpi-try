@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { useControls } from 'leva';
 import { Suspense, useMemo, useRef } from 'react';
 import { Color, IcosahedronGeometry, MeshDepthMaterial, MeshPhysicalMaterial, RGBADepthPacking } from 'three';
 import CustomShaderMaterial from 'three-custom-shader-material';
@@ -47,88 +46,7 @@ const Experiment: React.FC<ExperimentProps> = ({ shouldReduceQuality, isMobile, 
     const ior = 2.81;
     const iridescence = 0.96;
 
-    // const {
-    //     gradientStrength,
-    //     color,
-    //     speed,
-    //     noiseStrength,
-    //     displacementStrength,
-    //     fractAmount,
-    //     roughness,
-    //     metalness,
-    //     clearcoat,
-    //     reflectivity,
-    //     ior,
-    //     iridescence,
-    // } = useControls({
-    //     gradientStrength: {
-    //         value: 1,
-    //         min: 1,
-    //         max: 3,
-    //         step: 0.001,
-    //     },
-    //     color: '#af00ff',
-    //     speed: {
-    //         value: 1.1,
-    //         min: 0,
-    //         max: 20,
-    //         step: 0.001,
-    //     },
-    //     noiseStrength: {
-    //         value: 0.3,
-    //         min: 0,
-    //         max: 3,
-    //         step: 0.001,
-    //     },
-    //     displacementStrength: {
-    //         value: 0.57,
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //     },
-    //     fractAmount: {
-    //         value: 4,
-    //         min: 0,
-    //         max: 10,
-    //         step: 1,
-    //     },
-    //     roughness: {
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //         value: 0.56,
-    //     },
-    //     metalness: {
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //         value: 0.76,
-    //     },
-    //     clearcoat: {
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //         value: 0,
-    //     },
-    //     reflectivity: {
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //         value: 0.46,
-    //     },
-    //     ior: {
-    //         min: 0.001,
-    //         max: 5,
-    //         step: 0.001,
-    //         value: 2.81,
-    //     },
-    //     iridescence: {
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //         value: 0.96,
-    //     },
-    // });
+
     const ambientLightIntensity = 1;
     const ambientLightColor = '#fff';
 
@@ -137,50 +55,6 @@ const Experiment: React.FC<ExperimentProps> = ({ shouldReduceQuality, isMobile, 
     const directionalLightPositionX = -2;
     const directionalLightPositionY = 2;
     const directionalLightPositionZ = 3.5;
-
-    // const { intensity: ambientLightIntensity, color: ambientLightColor } = useControls('Ambient light', {
-    //     color: '#fff',
-    //     intensity: {
-    //         value: 1,
-    //         min: 0,
-    //         max: 1,
-    //         step: 0.001,
-    //     },
-    // });
-
-    // const {
-    //     intensity: directionalLightIntensity,
-    //     color: directionalLightColor,
-    //     positionX: directionalLightPositionX,
-    //     positionY: directionalLightPositionY,
-    //     positionZ: directionalLightPositionZ,
-    // } = useControls('Directional light', {
-    //     color: '#fff',
-    //     intensity: {
-    //         value: 5,
-    //         min: 0,
-    //         max: 5,
-    //         step: 0.001,
-    //     },
-    //     positionX: {
-    //         value: -2,
-    //         min: -10,
-    //         max: 10,
-    //         step: 0.001,
-    //     },
-    //     positionY: {
-    //         value: 2,
-    //         min: -10,
-    //         max: 10,
-    //         step: 0.001,
-    //     },
-    //     positionZ: {
-    //         value: 3.5,
-    //         min: -10,
-    //         max: 10,
-    //         step: 0.001,
-    //     },
-    // });
 
     const geometry = useMemo(() => {
         const geometry = mergeVertices(new IcosahedronGeometry(1.3, shouldReduceQuality ? 128 : 200));
@@ -256,10 +130,9 @@ const Experience = () => {
 
     return (
         <div className="canvas-wrapper absolute w-full h-full">
-            {/* <LevaWrapper /> */}
             <Canvas
                 camera={{
-                    position: [0, 0, isTablet ? 9 : 6],
+                    position: [0, 0, isTablet ? 9 : 5],
                     fov: 45,
                     near: 0.1,
                     far: 1000,

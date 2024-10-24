@@ -77,7 +77,7 @@ const NewsLetterSignUp: React.FC = () => {
                         d="M18 10H20C20 8.68678 19.7413 7.38642 19.2388 6.17317C18.7362 4.95991 17.9997 3.85752 17.0711 2.92893C16.1425 2.00035 15.0401 1.26375 13.8268 0.761205C12.6136 0.258658 11.3132 0 10 0V2C12.1217 2 14.1566 2.84285 15.6569 4.34315C17.1571 5.84344 18 7.87827 18 10Z"
                         fill="currentColor"
                     ></path>
-                </svg> : <Image src={img} alt="arrow icon" width={24} />}
+                </svg> : <Image src={img} alt="arrow icon" width={24} loading="lazy" />}
             </button>
         </form>
         {error && <p className="text-red-500 mt-4">{error}</p>}
