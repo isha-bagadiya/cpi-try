@@ -129,6 +129,40 @@ const PercentageModal: React.FC = () => {
     setCpiResults([]);
 
     try {
+      // Validate all percentages are numbers
+      const invalidFields = Object.entries(councilPercentages).filter(
+        ([_, value]) =>
+          isNaN(parseFloat(value)) ||
+          parseFloat(value) < 0 ||
+          parseFloat(value) > 100
+      );
+
+      if (invalidFields.length > 0) {
+        throw new Error(
+          `Invalid percentage values for: ${invalidFields
+            .map(([field]) => field)
+            .join(", ")}`
+        );
+      }
+
+      // Store percentages
+      const storeResponse = await fetch("/api/store-percentages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          percentages: councilPercentages,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!storeResponse.ok) {
+        const errorData = await storeResponse.json();
+        throw new Error(errorData.message || "Failed to store percentages");
+      }
+
+      const storeData = await storeResponse.json();
+      console.log("Store response:", storeData);
+
       // Calculate CPI
       const cpiResponse = await fetch("/api/calculate-cpi", {
         method: "POST",
@@ -161,7 +195,7 @@ const PercentageModal: React.FC = () => {
           Add Percentage for HCCs
         </h1>
         <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
-          <div className="flex flex-wrap items-center justify-between space-y-4">
+          <div className="flex flex-wrap items-center justify-between space-y-4 mb-3">
             {councilFields.map((field, index) => (
               <div
                 key={field}
@@ -195,10 +229,10 @@ const PercentageModal: React.FC = () => {
             ))}
           </div>
           {totalPercentage > 100 && (
-          <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
-            Total exceeds 100%. Please adjust{" "}
-            {(totalPercentage - 100).toFixed(2)}%.
-          </p>
+            <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
+              Total exceeds 100%. Please adjust{" "}
+              {(totalPercentage - 100).toFixed(2)}%.
+            </p>
           )}
           <button
             type="submit"
@@ -211,9 +245,10 @@ const PercentageModal: React.FC = () => {
             {loading ? "Simulating..." : "Simulate"}
           </button>
 
-          <div className="absolute -right-[100px] top-[380px] h-[300px] w-[300px] overflow-hidden hidden sm:flex items-center justify-center">
+          <div className="absolute -right-[100px] top-[400px] md:top-[380px] h-[300px] w-[300px] overflow-hidden hidden sm:flex items-center justify-center">
             <Image src={sidebg} alt="sidebg" className="w-full h-auto"></Image>
           </div>
+
           {error && (
             <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>
           )}
