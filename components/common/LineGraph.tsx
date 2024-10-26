@@ -2,19 +2,20 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 // import { Line } from 'react-chartjs-2';
-import { Chart as ChartJS, TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, ChartData, ChartOptions } from 'chart.js';
+import { ChartData, ChartOptions } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { parse, format } from 'date-fns';
 import dynamic from 'next/dynamic';
 import useSWR from 'swr';
+import ChartWrapper from './ChartWrapper';
 
-ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, annotationPlugin);
+// ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, annotationPlugin);
 
-const Line = dynamic(
-    () => import('react-chartjs-2').then(mod => mod.Line),
-    { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
-);
+// const Line = dynamic(
+//     () => import('react-chartjs-2').then(mod => mod.Line),
+//     { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
+// );
 
 // Define types for Event and Annotation
 interface Event {
@@ -35,7 +36,7 @@ interface CustomChartData extends ChartData<'line'> {
 // Define the shape of the CPI Data
 interface CPIData {
     date: string;
-    'Token house CPI': string;
+    HHI: string;
     CPI: string;
 }
 
@@ -95,7 +96,7 @@ const LineGraph: React.FC = () => {
             // Update the format from "dd-MM-yyyy" to "MM-dd-yyyy"
             const date = parse(item.date, 'MM-dd-yyyy', new Date());
             const cpi = parseFloat(item.CPI);
-            const tokenHouseCpi = parseFloat(item['Token house CPI']);  // Parse the "Token house CPI" value
+            const tokenHouseCpi = parseFloat(item['HHI']);  // Parse the "Token house CPI" value
 
             if (date && !isNaN(cpi) && !isNaN(tokenHouseCpi)) {
                 labels.push(date);
@@ -252,7 +253,7 @@ const LineGraph: React.FC = () => {
             {/* Chart Rendering */}
             <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[600px] py-8 px-4">
                 {chartData ? (
-                    <Line data={chartData} options={options} />
+                    <ChartWrapper data={chartData} type='line' options={options} />
                 ) : (
                     <p>Loading chart...</p>
                 )}

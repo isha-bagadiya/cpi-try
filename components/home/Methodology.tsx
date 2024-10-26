@@ -29,8 +29,7 @@ const Methodology: React.FC = () => {
                 <Image
                     src={whereImg}
                     alt="abstract icon"
-                    className="w-[]"
-                    quality={100}
+                    quality={80}
                     loading="lazy"
                 />
             </div>
@@ -67,7 +66,7 @@ const Methodology: React.FC = () => {
                 <Image
                     src={setDef}
                     alt="abstract icon"
-                    quality={100}
+                    quality={80}
                     loading="lazy"
                 />
             </div>
@@ -98,7 +97,7 @@ const Methodology: React.FC = () => {
                 <Image
                     src={exp}
                     alt="abstract icon"
-                    quality={100}
+                    quality={80}
                     loading="lazy"
                 />
             </div>
