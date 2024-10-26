@@ -22,7 +22,7 @@ export default function Home() {
       <div className="w-[100%] overflow-x-hidden">
         <HomeHeader />
         <HeroSection />
-        {/* <AddPercentage /> */}
+        <AddPercentage />
         <WhatIsCPI />
         <Methodology />
         <FeaturedDAOChart />
