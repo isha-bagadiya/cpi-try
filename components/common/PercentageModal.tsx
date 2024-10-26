@@ -48,18 +48,66 @@ const PercentageModal: React.FC = () => {
     setTotalPercentage(Number(total.toFixed(2)));
   }, [councilPercentages]);
 
+  const adjustLastEmptyField = () => {
+    const currentTotal = Object.values(councilPercentages).reduce(
+      (sum, val) => sum + (parseFloat(val) || 0),
+      0
+    );
+
+    if (currentTotal >= 100) return false;
+
+    const emptyFields = councilFields.filter(
+      (field) => !councilPercentages[field] || councilPercentages[field] === ""
+    );
+
+    if (emptyFields.length === 1) {
+      const remainingValue = (100 - currentTotal).toFixed(2);
+      setCouncilPercentages((prev) => ({
+        ...prev,
+        [emptyFields[0]]: remainingValue,
+      }));
+      return true;
+    }
+    return false;
+  };
+
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     currentIndex: number
   ) => {
+    // Allow only numeric keys, backspace, delete, tab, enter, decimal point, and arrow keys
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "Tab",
+      "Enter",
+      "ArrowLeft",
+      "ArrowRight",
+      ".",
+    ];
+    const isNumericKey = /^[0-9]$/.test(e.key);
+
+    if (!isNumericKey && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+      return;
+    }
+
     if (e.key === "Enter") {
       e.preventDefault();
-      // Move to next input if available
-      if (currentIndex < councilFields.length - 1) {
-        inputRefs.current[currentIndex + 1]?.focus();
+      const wasAdjusted = adjustLastEmptyField();
+
+      if (wasAdjusted) {
+        // If adjustment was made and it's the last field, try to submit
+        if (currentIndex === councilFields.length - 1) {
+          if (!isButtonDisabled) {
+            handleSubmit(e as unknown as React.FormEvent);
+          }
+        }
       } else {
-        // If it's the last input, submit the form
-        if (!isButtonDisabled) {
+        // If no adjustment was made, move to next field
+        if (currentIndex < councilFields.length - 1) {
+          inputRefs.current[currentIndex + 1]?.focus();
+        } else if (!isButtonDisabled) {
           handleSubmit(e as unknown as React.FormEvent);
         }
       }
@@ -103,25 +151,11 @@ const PercentageModal: React.FC = () => {
     }
   };
 
-  const remaining = 100 - totalPercentage;
-  const isButtonDisabled =
-    totalPercentage > 100 || totalPercentage < 100 || loading;
-
-  const getRemainingText = () => {
-    if (remaining < 0) {
-      return `Total must be 100%, Please adjust ${Math.abs(remaining).toFixed(
-        2
-      )}%`;
-    } else if (remaining > 0) {
-      return `Remaining: ${remaining.toFixed(2)}%`;
-    } else {
-      return "Total: 100%";
-    }
-  };
+  const isButtonDisabled = totalPercentage !== 100 || loading;
 
   return (
     <>
-      <div className="text-white w-full h-max p-8 pt-0 relative flex justify-center items-center flex-col bg-dark-gray overflow-x-hidden overflow-y-hidden">
+      <div className="text-white w-full h-max p-8 pt-0 relative flex justify-center items-center flex-col bg-dark-gray min-h-[100vh] overflow-x-hidden overflow-y-hidden">
         {/* Details Form */}
         <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center mb-6 md:mb-12">
           Add Percentage for HCCs
@@ -147,21 +181,25 @@ const PercentageModal: React.FC = () => {
                       handlePercentageChange(field, e.target.value)
                     }
                     onKeyDown={(e) => handleKeyDown(e, index)}
+                    inputMode="decimal"
                     min="0"
                     max="100"
                     placeholder="Enter Percentage"
                     required
                   />
-                  <p className="absolute right-3 top-1/4 transform -translate-y-1/2 font-extralight text-xs text-[#FFD366] my-3">
+                  <p className="absolute right-3 top-1/3 transform -translate-y-1/2 font-extralight text-[16px] text-[#FFD366] my-3">
                     %
                   </p>
                 </div>
               </div>
             ))}
           </div>
+          {totalPercentage > 100 && (
           <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
-            {getRemainingText()}
+            Total exceeds 100%. Please adjust{" "}
+            {(totalPercentage - 100).toFixed(2)}%.
           </p>
+          )}
           <button
             type="submit"
             aria-label="simulate"
