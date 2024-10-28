@@ -14,21 +14,36 @@ const councilFields = [
   "Developer Advisory Board",
 ];
 
+const initialPercentages = {
+  "Token House": "32.33",
+  "Citizen House": "34.59",
+  "Grants Council": "10.15",
+  "Grants Council (Milestone & Metrics Sub-committee)": "2.82",
+  "Security Council": "12.78",
+  "Code of Conduct Council": "4.32",
+  "Developer Advisory Board": "3.01"
+};
+
 type CPIResult = {
   filename: string;
   cpi: number;
 };
 
+type CPIData = {
+  date: string;
+  HHI: string;
+  CPI: string;
+};
+
 const PercentageModal: React.FC = () => {
-  const [councilPercentages, setCouncilPercentages] = useState<
-    Record<string, string>
-  >({});
+  const [councilPercentages, setCouncilPercentages] = useState<Record<string, string>>(initialPercentages);
   const [totalPercentage, setTotalPercentage] = useState(0);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [cpiResults, setCpiResults] = useState<CPIResult[]>([]);
+  const [initialCPI, setInitialCPI] = useState<CPIResult[]>([]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
@@ -38,6 +53,23 @@ const PercentageModal: React.FC = () => {
     if (inputRefs.current[0]) {
       inputRefs.current[0].focus();
     }
+
+    const loadInitialCPI = async () => {
+      try {
+        const response = await fetch("/daily_hhi_cpi.json");
+        const data: CPIData[] = await response.json();
+        // Convert CPIData to CPIResult format
+        const formattedData: CPIResult[] = data.map((item) => ({
+          filename: item.date,
+          cpi: parseFloat(item.CPI),
+        }));
+        setInitialCPI(formattedData);
+      } catch (err) {
+        console.error("Error loading initial CPI:", err);
+      }
+    };
+
+    loadInitialCPI();
   }, []);
 
   useEffect(() => {
@@ -47,6 +79,10 @@ const PercentageModal: React.FC = () => {
     );
     setTotalPercentage(Number(total.toFixed(2)));
   }, [councilPercentages]);
+
+  const formatNumber = (num: number) => {
+    return Number.isInteger(num) ? num.toString() : num.toFixed(2);
+  };
 
   const adjustLastEmptyField = () => {
     const currentTotal = Object.values(councilPercentages).reduce(
@@ -61,50 +97,50 @@ const PercentageModal: React.FC = () => {
     );
 
     if (emptyFields.length === 1) {
-      const remainingValue = (100 - currentTotal).toFixed(2);
+      const remainingValue = 100 - currentTotal;
+      const formattedValue = formatNumber(remainingValue);
+
       setCouncilPercentages((prev) => ({
         ...prev,
-        [emptyFields[0]]: remainingValue,
+        [emptyFields[0]]: formattedValue,
       }));
       return true;
     }
     return false;
   };
 
+  const handlePercentageChange = (field: string, value: string) => {
+    // Only allow numbers and decimal points
+    const sanitizedValue = value.replace(/[^\d.]/g, "");
+
+    // Prevent multiple decimal points
+    if ((sanitizedValue.match(/\./g) || []).length > 1) return;
+
+    // Validate the number is between 0 and 100
+    const numValue = parseFloat(sanitizedValue);
+    if (numValue > 100) return;
+
+    setCouncilPercentages((prev) => ({
+      ...prev,
+      [field]: sanitizedValue,
+    }));
+  };
+
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     currentIndex: number
   ) => {
-    // Allow only numeric keys, backspace, delete, tab, enter, decimal point, and arrow keys
-    const allowedKeys = [
-      "Backspace",
-      "Delete",
-      "Tab",
-      "Enter",
-      "ArrowLeft",
-      "ArrowRight",
-      ".",
-    ];
-    const isNumericKey = /^[0-9]$/.test(e.key);
-
-    if (!isNumericKey && !allowedKeys.includes(e.key)) {
-      e.preventDefault();
-      return;
-    }
-
     if (e.key === "Enter") {
       e.preventDefault();
       const wasAdjusted = adjustLastEmptyField();
 
       if (wasAdjusted) {
-        // If adjustment was made and it's the last field, try to submit
         if (currentIndex === councilFields.length - 1) {
           if (!isButtonDisabled) {
             handleSubmit(e as unknown as React.FormEvent);
           }
         }
       } else {
-        // If no adjustment was made, move to next field
         if (currentIndex < councilFields.length - 1) {
           inputRefs.current[currentIndex + 1]?.focus();
         } else if (!isButtonDisabled) {
@@ -114,11 +150,11 @@ const PercentageModal: React.FC = () => {
     }
   };
 
-  const handlePercentageChange = (field: string, value: string) => {
-    setCouncilPercentages((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleFocusOut = (currentIndex: number) => {
+    if (currentIndex === councilFields.length - 2) {
+      // Second to last field
+      adjustLastEmptyField();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -215,6 +251,7 @@ const PercentageModal: React.FC = () => {
                       handlePercentageChange(field, e.target.value)
                     }
                     onKeyDown={(e) => handleKeyDown(e, index)}
+                    onBlur={() => handleFocusOut(index)}
                     inputMode="decimal"
                     min="0"
                     max="100"
@@ -228,10 +265,15 @@ const PercentageModal: React.FC = () => {
               </div>
             ))}
           </div>
-          {totalPercentage > 100 && (
+          {totalPercentage > 100 ? (
             <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
-              Total exceeds 100%. Please adjust{" "}
+              Total exceeds 100%. Please adjust {" "}
               {(totalPercentage - 100).toFixed(2)}%.
+            </p>
+          ):(
+            <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
+              Remaining Perecentages: {" "}
+              {(100 - totalPercentage)}%
             </p>
           )}
           <button
@@ -253,9 +295,9 @@ const PercentageModal: React.FC = () => {
             <p className="text-red-500 mt-4 text-center mx-auto">{error}</p>
           )}
 
-          {cpiResults.length > 0 && (
+          {(cpiResults.length > 0 || initialCPI.length > 0) && (
             <div className="mt-8 w-[90%] mx-auto flex items-center justify-center">
-              <CPILineGraph cpiResults={cpiResults} />
+              <CPILineGraph cpiResults={cpiResults} initialCPI={initialCPI} />
             </div>
           )}
         </form>
