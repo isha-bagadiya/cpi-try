@@ -1,8 +1,5 @@
+import { connectDB } from "@/lib/db/cpimongo";
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
-import csv from "csv-parser";
-import { Readable } from "stream";
 
 type CouncilPercentages = Record<string, number>;
 interface CouncilPercentage {
@@ -80,25 +77,6 @@ const dateRanges: DateRange[] = [
   },
 ];
 
-const allCouncils = new Set([
-  "th_vp",
-  "ch_vp_r2",
-  "ch_vp_r3",
-  "ch_vp_r4",
-  "gc_vp_s3",
-  "gc_vp_s4",
-  "gc_vp_s5",
-  "gc_vp_s6",
-  "gc_vp_mm_s5",
-  "gc_vp_mm_s6",
-  "sc_vp_s5",
-  "sc_vp_s6",
-  "coc_vp_s5",
-  "coc_vp_s6",
-  "dab_vp_s5",
-  "dab_vp_s6",
-]);
-
 interface CouncilMapping {
   displayName: string;
   keys: string[];
@@ -135,28 +113,17 @@ const councilMappings: CouncilMapping[] = [
   },
 ];
 
-async function parseCSV(filePath: string): Promise<any[]> {
-  const results: any[] = [];
-  const fileContent = await fs.readFile(filePath, "utf-8");
-  const readableStream = Readable.from(fileContent);
-
-  return new Promise((resolve, reject) => {
-    readableStream
-      .pipe(csv())
-      .on("data", (data) => results.push(data))
-      .on("end", () => resolve(results))
-      .on("error", (error) => reject(error));
-  });
-}
+let cachedClient: any = null;
+let cachedDb: any = null;
 
 function calculateCPI(
   data: any[],
   percentages: CouncilPercentages,
   redistributedPercentages: Record<string, number>,
-  activeCouncils: Set<string> // Add activeCouncils parameter
+  activeCouncils: Set<string>
 ): number {
   return data.reduce((sum, delegate) => {
-    // Get the redistributed percentage for each council, falling back to 0 if council is inactive
+    // console.log("inside calculate function");
     const tokenHousePercentage = redistributedPercentages["Token House"] || 0;
     const citizenHousePercentage =
       redistributedPercentages["Citizen House"] || 0;
@@ -173,40 +140,35 @@ function calculateCPI(
     const dabPercentage =
       redistributedPercentages["Developer Advisory Board"] || 0;
 
-    // Helper function to get the correct council value based on active councils
     const getCouncilValue = (councilKeys: string[]): number => {
       const activeKey = councilKeys.find((key) => activeCouncils.has(key));
-      return activeKey ? parseFloat(delegate[activeKey]) || 0 : 0;
+      return activeKey
+        ? parseFloat(delegate.voting_power[activeKey]?.toString() || "0")
+        : 0;
     };
 
     const influence =
-      // Token House is always th_vp
-      (parseFloat(delegate.th_vp) || 0) * (tokenHousePercentage / 100) +
-      // Citizen House - check which round is active
+      parseFloat(delegate.voting_power.th_vp?.toString() || "0") *
+        (tokenHousePercentage / 100) +
       getCouncilValue(["ch_vp_r2", "ch_vp_r3", "ch_vp_r4"]) *
         (citizenHousePercentage / 100) +
-      // Grants Council - check which season is active
       getCouncilValue(["gc_vp_s3", "gc_vp_s4", "gc_vp_s5", "gc_vp_s6"]) *
         (grantsCouncilPercentage / 100) +
-      // Grants Council MM - check which season is active
       getCouncilValue(["gc_vp_mm_s5", "gc_vp_mm_s6"]) *
         (grantsMMPercentage / 100) +
-      // Security Council - check which season is active
       getCouncilValue(["sc_vp_s5", "sc_vp_s6"]) *
         (securityCouncilPercentage / 100) +
-      // Code of Conduct Council - check which season is active
       getCouncilValue(["coc_vp_s5", "coc_vp_s6"]) * (cocPercentage / 100) +
-      // Developer Advisory Board - check which season is active
       getCouncilValue(["dab_vp_s5", "dab_vp_s6"]) * (dabPercentage / 100);
 
     return sum + Math.pow(influence, 2);
   }, 0);
 }
 
-function getActiveCouncils(filename: string): Set<string> {
-  const date = filename.split(".")[0];
+function getActiveCouncils(date: Date): Set<string> {
+  const dateString = date.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
   for (const range of dateRanges) {
-    if (date >= range.start_date && date <= range.end_date) {
+    if (dateString >= range.start_date && dateString <= range.end_date) {
       return range.HCC;
     }
   }
@@ -222,18 +184,14 @@ function calculateCouncilPercentages(
   const activeCouncilsMap: Record<string, number> = {};
   const originalPercentages: Record<string, number> = {};
 
-  // First pass: separate active and inactive councils
   for (const [council, percentage] of Object.entries(percentages)) {
     const percentageValue = Number(percentage);
     const mapping = councilMappings.find((m) => m.displayName === council);
 
     if (!mapping) continue;
 
-    // Store original percentage
     originalPercentages[council] = percentageValue;
-
-    // Check if any of the council's keys are in the active set
-    const isActive = mapping.keys.some((key) => activeCouncils.has(key));
+    const isActive = mapping.keys.some((key: any) => activeCouncils.has(key));
 
     if (isActive) {
       activeTotal += percentageValue;
@@ -243,12 +201,10 @@ function calculateCouncilPercentages(
     }
   }
 
-  // Calculate redistribution amount per active council
   const numberOfActiveCouncils = Object.keys(activeCouncilsMap).length;
   const redistributionPerCouncil =
     numberOfActiveCouncils > 0 ? inactiveTotal / numberOfActiveCouncils : 0;
 
-  // Create redistributed percentages
   const redistributed: Record<string, number> = {};
   for (const [council, originalPercentage] of Object.entries(
     activeCouncilsMap
@@ -266,62 +222,131 @@ function calculateCouncilPercentages(
   };
 }
 
+class SimpleCache<T> {
+  private cache: Map<string, { value: T; expiry: number }>;
+
+  constructor() {
+    this.cache = new Map();
+  }
+
+  get(key: string): T | undefined {
+    const item = this.cache.get(key);
+    if (item && Date.now() < item.expiry) {
+      return item.value;
+    }
+    this.cache.delete(key);
+    return undefined;
+  }
+
+  set(key: string, value: T, ttl: number): void {
+    const expiry = Date.now() + ttl;
+    this.cache.set(key, { value, expiry });
+  }
+}
+
+const cache = new SimpleCache<any>();
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+
+async function getUniqueDates(db: any): Promise<Date[]> {
+  const cachedDates = cache.get("uniqueDates");
+  if (cachedDates) {
+    return cachedDates;
+  }
+
+  const dates = await db
+    .collection("delegate_data")
+    .aggregate([
+      { $group: { _id: "$date" } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, date: "$_id" } },
+    ])
+    .toArray();
+
+  const formattedDates = dates.map((d: any) => d.date);
+  cache.set("uniqueDates", formattedDates, CACHE_DURATION);
+  return formattedDates;
+}
+
+async function getDelegateDataForDate(db: any, date: Date) {
+  const cacheKey = `delegateData_${date.toISOString()}`;
+  const cachedData = cache.get(cacheKey);
+  if (cachedData) {
+    return cachedData;
+  }
+
+  const data = await db
+    .collection("delegate_data")
+    .find({ date: date })
+    .project({
+      voting_power: 1,
+      _id: 0,
+    })
+    .toArray();
+
+  cache.set(cacheKey, data, CACHE_DURATION);
+  return data;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const percentages = (await request.json()) as CouncilPercentages;
+    const client = await connectDB();
+    const db = client.db();
 
-    // Read and parse CSV files
-    const csvFiles = [
-      "2022-06-08.csv",
-      "2023-03-01.csv",
-      "2023-06-19.csv",
-      "2023-12-04.csv",
-      "2024-10-14.csv",
-      "2024-10-15.csv",
-      "2024-10-16.csv",
-    ];
-    const results = [];
+    const dates = await getUniqueDates(db);
 
-    for (const file of csvFiles) {
-      const activeCouncils = getActiveCouncils(file);
-      const filePath = path.join(process.cwd(), "public", file);
-      const data = await parseCSV(filePath);
-      const councilPercentages = calculateCouncilPercentages(
-        activeCouncils,
-        percentages
-      );
-      const cpi = calculateCPI(
-        data,
-        percentages,
-        councilPercentages.redistributed,
-        activeCouncils
-      );
-
-      console.log(`\nFile: ${file}`);
-      console.log("Active councils:", Array.from(activeCouncils));
-      console.log(
-        "Original percentages:",
-        councilPercentages.originalPercentages
-      );
-      console.log("Inactive total:", councilPercentages.inactive);
-      console.log("Active total:", councilPercentages.active);
-
-      console.log(
-        "Redistributed percentages:",
-        councilPercentages.redistributed
-      );
-      const redistributedTotal = Object.values(
-        councilPercentages.redistributed
-      ).reduce((sum, value) => sum + value, 0);
-
-      console.log(
-        "Total after redistribution:",
-        redistributedTotal.toFixed(2) + "%"
-      );
-      console.log("---");
-      results.push({ filename: file, cpi });
+    if (dates.length === 0) {
+      console.error("No dates found in the collection");
+      return NextResponse.json({ error: "No data available" }, { status: 404 });
     }
-    return NextResponse.json({ results });
+
+    const results = await Promise.all(
+      dates.map(async (date) => {
+        const activeCouncils = getActiveCouncils(new Date(date));
+        const data = await getDelegateDataForDate(db, new Date(date));
+
+        if (data.length === 0) {
+          console.warn(`No data found for date: ${date}`);
+          return null;
+        }
+
+        const councilPercentages = calculateCouncilPercentages(
+          activeCouncils,
+          percentages
+        );
+        const cpi = calculateCPI(
+          data,
+          percentages,
+          councilPercentages.redistributed,
+          activeCouncils
+        );
+
+        const activeRedistributed = Object.fromEntries(
+          Object.entries(councilPercentages.redistributed).filter(([council]) =>
+            councilMappings.some(
+              (mapping) =>
+                mapping.keys.some((key) => activeCouncils.has(key)) &&
+                mapping.displayName === council
+            )
+          )
+        );
+
+        const dateString = new Date(date).toISOString().split("T")[0];
+
+        return {
+          date: dateString,
+          cpi,
+          activeCouncils: Array.from(activeCouncils),
+          councilPercentages,
+          activeRedistributed,
+          filename: dateString,
+        };
+      })
+    );
+
+    const filteredResults = results.filter((result) => result !== null);
+
+    return NextResponse.json({ results: filteredResults });
   } catch (error) {
     console.error("Error calculating CPI:", error);
     return NextResponse.json(
