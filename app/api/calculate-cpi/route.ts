@@ -297,29 +297,43 @@ export async function POST(request: NextRequest) {
         activeCouncils
       );
 
-      console.log(`\nFile: ${file}`);
-      console.log("Active councils:", Array.from(activeCouncils));
-      console.log(
-        "Original percentages:",
-        councilPercentages.originalPercentages
-      );
-      console.log("Inactive total:", councilPercentages.inactive);
-      console.log("Active total:", councilPercentages.active);
+      const activeRedistributed = Object.keys(councilPercentages.redistributed)
+        .filter((council) =>
+          councilMappings.find(
+            (mapping) =>
+              mapping.keys.some((key) => activeCouncils.has(key)) &&
+              mapping.displayName === council
+          )
+        )
+        .reduce((obj, council) => {
+          obj[council] = councilPercentages.redistributed[council];
+          return obj;
+        }, {} as Record<string, number>);
 
-      console.log(
-        "Redistributed percentages:",
-        councilPercentages.redistributed
-      );
-      const redistributedTotal = Object.values(
-        councilPercentages.redistributed
-      ).reduce((sum, value) => sum + value, 0);
+      // console.log(`\nFile: ${file}`);
+      // console.log("Active councils:", Array.from(activeCouncils));
+      // console.log(
+      //   "Original percentages:",
+      //   councilPercentages.originalPercentages
+      // );
+      // console.log("Inactive total:", councilPercentages.inactive);
+      // console.log("Active total:", councilPercentages.active);
 
-      console.log(
-        "Total after redistribution:",
-        redistributedTotal.toFixed(2) + "%"
-      );
-      console.log("---");
-      results.push({ filename: file, cpi });
+      // console.log(
+      //   "Redistributed percentages:",
+      //   councilPercentages.redistributed
+      // );
+      // const redistributedTotal = Object.values(
+      //   councilPercentages.redistributed
+      // ).reduce((sum, value) => sum + value, 0);
+
+      // console.log(
+      //   "Total after redistribution:",
+      //   redistributedTotal.toFixed(2) + "%"
+      // );
+      // console.log("---");
+      console.log(activeRedistributed);
+      results.push({ filename: file, cpi, activeRedistributed });
     }
     return NextResponse.json({ results });
   } catch (error) {
