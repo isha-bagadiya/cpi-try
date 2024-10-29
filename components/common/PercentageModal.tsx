@@ -3,6 +3,24 @@ import { useEffect, useRef, useState } from "react";
 import CPILineGraph from "./CpiLineGraph";
 import sidebg from "@/public/influencepagesideimage.svg";
 import Image from "next/image";
+import { IoInformationCircleOutline } from "react-icons/io5";
+
+const councilInfo = {
+  "Token House":
+    "Oversees voting on governance proposals by OP token holders or their delegates.",
+  "Citizen House":
+    "Allocates funding for public goods and votes on certain governance vetoes.",
+  "Grants Council":
+    "Reviews and approves grant applications, ensuring milestone adherence and transparency.",
+  "Grants Council (Milestone & Metrics Sub-committee)":
+    "Specializes in defining and tracking project milestones to measure grant impact.",
+  "Security Council":
+    "Protects protocol integrity by managing security upgrades and coordinating emergency responses.",
+  "Code of Conduct Council":
+    "Enforces community conduct standards by reviewing and addressing violation reports.",
+  "Developer Advisory Board":
+    "Advises on technical decisions and reviews mission proposals, supporting technical governance.",
+};
 
 const councilFields = [
   "Token House",
@@ -21,22 +39,37 @@ const initialPercentages = {
   "Grants Council (Milestone & Metrics Sub-committee)": "2.82",
   "Security Council": "12.78",
   "Code of Conduct Council": "4.32",
-  "Developer Advisory Board": "3.01"
+  "Developer Advisory Board": "3.01",
 };
+
+type CouncilName =
+  | "Token House"
+  | "Citizen House"
+  | "Grants Council"
+  | "Grants Council (Milestone & Metrics Sub-committee)"
+  | "Security Council"
+  | "Code of Conduct Council"
+  | "Developer Advisory Board";
+
+// Define the activeRedistributed type as a partial record
+type ActiveRedistributed = Partial<Record<CouncilName, number>>;
 
 type CPIResult = {
   filename: string;
   cpi: number;
+  activeRedistributed?: ActiveRedistributed;
 };
 
 type CPIData = {
   date: string;
   HHI: string;
   CPI: string;
+  activeRedistributed?: ActiveRedistributed;
 };
 
 const PercentageModal: React.FC = () => {
-  const [councilPercentages, setCouncilPercentages] = useState<Record<string, string>>(initialPercentages);
+  const [councilPercentages, setCouncilPercentages] =
+    useState<Record<string, string>>(initialPercentages);
   const [totalPercentage, setTotalPercentage] = useState(0);
 
   const [loading, setLoading] = useState(false);
@@ -45,6 +78,7 @@ const PercentageModal: React.FC = () => {
   const [cpiResults, setCpiResults] = useState<CPIResult[]>([]);
   const [initialCPI, setInitialCPI] = useState<CPIResult[]>([]);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
   useEffect(() => {
     // Initialize the refs array
@@ -212,6 +246,7 @@ const PercentageModal: React.FC = () => {
 
       const { results } = await cpiResponse.json();
       setCpiResults(results);
+      console.log("resultttt", results);
       setSuccess("Percentages submitted and CPI calculated successfully!");
     } catch (err: any) {
       console.error("Error:", err);
@@ -226,20 +261,51 @@ const PercentageModal: React.FC = () => {
   return (
     <>
       <div className="text-white w-full h-max p-8 pt-0 relative flex justify-center items-center flex-col bg-dark-gray min-h-[100vh] overflow-x-hidden overflow-y-hidden">
+
         {/* Details Form */}
         <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center mb-6 md:mb-12">
           Add Percentage for HCCs
         </h1>
+
+        <p className=" mb-14 text-gray-300 font-mori">
+          This tool allows you to explore how adjusting the influence of
+          different governance bodies impacts the overall Concentration of Power
+          Index (CPI) in the Optimism Collective. By setting custom influence
+          levels for each House, Council, and Committee, you can instantly see
+          how these changes affect the distribution and concentration of voting
+          power across the organization. <br />{" "}
+          <span className="font-extrabold">
+            Dive in to understand how governance dynamics shift based on your
+            inputs!
+          </span>
+        </p>
+
         <form className="flex flex-col font-mori" onSubmit={handleSubmit}>
-          <div className="flex flex-wrap items-center justify-between space-y-4 mb-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
             {councilFields.map((field, index) => (
               <div
                 key={field}
-                className="flex flex-col items-start justify-evenly space-y-2 lg:w-[30%] md:w-[28%] sm:w-[42%] w-full"
+                className="flex flex-col items-start justify-between space-y-2 lg:w-[30%] md:w-[28%] sm:w-[42%] w-full hau"
               >
-                <label className=" font-mori text-md font-bold tracking-tighter">
-                  {field}
-                </label>
+                <div className="flex justify-start items-center gap-2 w-full">
+                  <label className=" font-mori text-md font-bold tracking-tighter">
+                    {field}
+                  </label>
+                  <div className="relative">
+                    <div
+                      className="text-[#FEC5FB] hover:text-[#FFD366] transition-colors cursor-pointer text-lg"
+                      onMouseEnter={() => setActiveTooltip(field)}
+                      onMouseLeave={() => setActiveTooltip(null)}
+                    >
+                      <IoInformationCircleOutline />
+                    </div>
+                    {activeTooltip === field && (
+                      <div className="absolute z-10 w-64 p-2 bg-[#222222] text-white text-xs rounded-lg shadow-lg left-4 top-6 border border-[#FEC5FB] opacity-70">
+                        {councilInfo[field as keyof typeof councilInfo]}
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <div className="w-full relative">
                   <input
                     ref={(el) => {
@@ -267,13 +333,12 @@ const PercentageModal: React.FC = () => {
           </div>
           {totalPercentage > 100 ? (
             <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
-              Total exceeds 100%. Please adjust {" "}
+              Total exceeds 100%. Please adjust{" "}
               {(totalPercentage - 100).toFixed(2)}%.
             </p>
-          ):(
+          ) : (
             <p className="text-xs text-center my-4 text-[#FEC5FB] mt-10">
-              Remaining Perecentages: {" "}
-              {(100 - totalPercentage)}%
+              Remaining Perecentages: {100 - totalPercentage}%
             </p>
           )}
           <button
@@ -296,7 +361,7 @@ const PercentageModal: React.FC = () => {
           )}
 
           {(cpiResults.length > 0 || initialCPI.length > 0) && (
-            <div className="mt-8 w-[90%] mx-auto flex items-center justify-center">
+            <div className="mt-8 w-[95%] mx-auto flex items-center justify-center">
               <CPILineGraph cpiResults={cpiResults} initialCPI={initialCPI} />
             </div>
           )}
