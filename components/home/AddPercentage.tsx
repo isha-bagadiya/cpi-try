@@ -66,7 +66,7 @@ const AddPercentage: React.FC = () => {
             )}
           </div>
         </div>
-        <Link href="/influence">
+        <Link href="http://cpi.lamproslabs.io/">
           <button
             className="mt-6 flex flex-row button-50 justify-center items-center font-redhat font-semibold text-xl"
             aria-label="add-percentage"

@@ -90,7 +90,7 @@ const PercentageModal: React.FC = () => {
 
     const loadInitialCPI = async () => {
       try {
-        const response = await fetch("/daily_hhi_cpi.json");
+        const response = await fetch("/daily_hhi_cpi_new.json");
         const data: CPIData[] = await response.json();
         // Convert CPIData to CPIResult format
         const formattedData: CPIResult[] = data.map((item) => ({
@@ -261,7 +261,7 @@ const PercentageModal: React.FC = () => {
   return (
     <>
       <div className="text-white w-full h-max p-8 pt-0 relative flex justify-center items-center flex-col bg-dark-gray min-h-[100vh] overflow-x-hidden overflow-y-hidden">
-
+        
         {/* Details Form */}
         <h1 className="font-mori font-semibold text-[#FEC5FB] text-2xl md:text-4xl lg:text-6xl tracking-tight text-center mb-6 md:mb-12">
           Add Percentage for HCCs
