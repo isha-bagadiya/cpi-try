@@ -1,14 +1,19 @@
-import DataTable from "@/components/common/DataTable";
+import OptimismDataTable from "@/components/common/OptimismDataTable";
 import Header from "@/components/layout/Header";
-import { getItem } from "@/lib/utils/fetchDataOnServer";
+// import { getItem } from "@/lib/utils/fetchDataOnServer";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
+import path from 'path';
+import { promises as fs } from 'fs';
 
 const optimism: React.FC = async () => {
-    let initialDataOptimism = [];
-    initialDataOptimism = await getItem();
+    // let initialDataOptimism = [];
+    // initialDataOptimism = await getItem();
+    const jsonDirectory = path.join(process.cwd(), 'public');
+    const fileContents = await fs.readFile(jsonDirectory + '/optimism_delegates.json', 'utf8');
+    const initialDataOptimism = JSON.parse(fileContents);
     return (
         <div className="bg-dark-gray">
             <Header />
@@ -17,7 +22,7 @@ const optimism: React.FC = async () => {
                 {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 m-4 md:gap-8 md:m-8 min-h-[100vh]"> */}
                 <div className="custom-scrollbar">
                     <Suspense fallback={<>Loading...</>}>
-                        <DataTable initialData={initialDataOptimism} background="bg-optimism" platform="optimism" member={true} iconURL="/assets/images/op_small.svg" />
+                        <OptimismDataTable initialData={initialDataOptimism} background="bg-optimism" platform="optimism" member={true} iconURL="/assets/images/op_small.svg" />
                     </Suspense>
                 </div>
                 {/* </div> */}

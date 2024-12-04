@@ -50,7 +50,7 @@ const fetcher = (url: string) =>
 const LineGraph: React.FC = () => {
   // const [chartData, setChartData] = useState<CustomChartData | null>(null);
   const { data: fetchedData, error } = useSWR<CPIData[]>(
-    "/daily_hhi_cpi.json",
+    "/home_hhi_cpi.json",
     fetcher
   );
   const [view, setView] = useState<"daily" | "movingAverage">("daily");

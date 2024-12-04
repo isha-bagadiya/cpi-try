@@ -1,10 +1,10 @@
 import { cache } from 'react'
 import 'server-only'
 
-const api_url = process.env.NEXT_PUBLIC_API_URL;
+const api_url = process.env.NEXT_PUBLIC_API_URL!;
 
 const API_URL_AAVE = `${api_url}/aave`;
-const API_URL_OPTIMISM = `${api_url}/optimism`;
+const API_URL_OPTIMISM = `${api_url}/optimism`; 
 const API_URL_UNISWAP = `${api_url}/uniswap`;
 const API_URL_COMPOUND = `${api_url}/compound`;
 

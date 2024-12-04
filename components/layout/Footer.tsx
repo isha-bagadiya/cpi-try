@@ -115,6 +115,29 @@ const Footer: React.FC = () => {
                         <span>Contact Us</span>
 
                     </div>
+                    <a href="https://docs.daocpi.com" className="social-link docs flex items-center space-x-2" target="_blank">
+                        <svg
+                            className="w-6 h-6 border rounded-full p-1"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 32 32"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 9V23C10 23.5304 10.2107 24.0391 10.5858 24.4142C10.9609 24.7893 11.4696 25 12 25H22C22.5304 25 23.0391 24.7893 23.4142 24.4142C23.7893 24.0391 24 23.5304 24 23V14.414C24 14.1489 23.8946 13.8946 23.707 13.707L18.293 8.293C18.1054 8.10547 17.8511 8 17.586 8H12C11.4696 8 10.9609 8.21071 10.5858 8.5858C10.2107 8.96089 10 9.46957 10 10Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M18 8V13C18 13.5304 18.2107 14.0391 18.5858 14.4142C18.9609 14.7893 19.4696 15 20 15H24" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+
+                        <span>Docs</span>
+                        <svg
+                            className="w-6"
+                            width="50"
+                            height="50"
+                            viewBox="0 0 50 50"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.4721 34.2505L15.4165 32.1949L27.75 19.8615L25.6944 17.8059L27.75 15.7504L29.8055 17.8059L31.8611 15.7504L33.9167 17.8059L31.8611 19.8615L33.9167 21.9171L31.8611 23.9727L29.8055 21.9171L17.4721 34.2505ZM31.8611 28.0838L33.9167 26.0282L31.8611 23.9727L29.8055 26.0282L31.8611 28.0838ZM31.8611 28.0838L29.8055 30.1394L31.8611 32.1949L33.9167 30.1394L31.8611 28.0838ZM21.5833 17.8059L23.6388 15.7504L25.6944 17.8059L23.6388 19.8615L21.5833 17.8059ZM21.5833 17.8059L19.5277 19.8615L17.4721 17.8059L19.5277 15.7504L21.5833 17.8059Z" fill="white" />
+                        </svg>
+                    </a>
                 </div>
             </div>
             {/* CoPI moving text with transparent text clipped to gradient background */}

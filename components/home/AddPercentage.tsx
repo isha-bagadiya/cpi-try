@@ -19,8 +19,8 @@ const AddPercentage: React.FC = () => {
         ></Image>
       </div>
       <div className="bg-[#15141408] backdrop-blur-[215.2px] flex flex-col items-center justify-center p-7 sm:p-10 w-[80%] sm:w-[65%] mx-auto rounded-[63px] border border-[#FEC5FB] relative z-20">
-        <h1 className="font-mori max-w-[90%] text-xl md:text-2xl lg:text-2.5xl text-center text-[#F3FD9D]">
-          Add Influence for each HCCs
+        <h1 className="font-mori max-w-[90%] text-xl md:text-2xl lg:text-[31px] font-semibold text-center text-[#F3FD9D]">
+          Customize HCC Influence and Simulate CPI
         </h1>
 
         <div className="flex flex-col md:flex-row gap-6 w-full my-8">
