@@ -6,6 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
+import OptimismDataTable from "@/components/common/OptimismDataTable";
+import path from 'path';
+import { promises as fs } from 'fs';
 
 interface explorePageProps {
     searchParams: { [key: string]: string | string[] | undefined };
@@ -19,19 +22,30 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
         return activeFilters.includes('All') || activeFilters.includes(component);
     };
 
-    let initialDataOptimism = [];
-    let initialDataAave = [];
-    let initialUniswapData = [];
-    let initialCompoundData = [];
+    // let initialDataOptimism = [];
+    // let initialDataAave = [];
+    // let initialUniswapData = [];
+    // let initialCompoundData = [];
 
-    try {
-        initialDataOptimism = await getItem();
-        if (isVisible('Aave')) initialDataAave = await getItemsAave();
-        if (isVisible('Uniswap')) initialUniswapData = await getItemsUniswap();
-        if (isVisible('Compound')) initialCompoundData = await getItemCompound();
-    } catch (error) {
-        console.error("Error fetching data:", error);
-    }
+    // try {
+    //     initialDataOptimism = await getItem();
+    //     if (isVisible('Aave')) initialDataAave = await getItemsAave();
+    //     if (isVisible('Uniswap')) initialUniswapData = await getItemsUniswap();
+    //     if (isVisible('Compound')) initialCompoundData = await getItemCompound();
+    // } catch (error) {
+    //     console.error("Error fetching data:", error);
+    // }
+
+    const jsonDirectory = path.join(process.cwd(), 'public');
+    const fileContentAave = await fs.readFile(jsonDirectory + '/aave_delegates.json', 'utf8');
+    const initialDataAave = JSON.parse(fileContentAave);
+
+    const fileContentUniswap = await fs.readFile(jsonDirectory + '/uniswap_delegates.json', 'utf8');
+    const initialUniswapData = JSON.parse(fileContentUniswap);
+
+    const fileContentCompound = await fs.readFile(jsonDirectory + '/compound_delegates.json', 'utf8');
+    const initialCompoundData = JSON.parse(fileContentCompound);
+
 
     return <div className="bg-dark-gray">
         <Header />
@@ -49,21 +63,25 @@ const explore: React.FC<explorePageProps> = async ({ searchParams }) => {
                 {isVisible('Aave') && (
                     <div className="custom-scrollbar">
                         <Suspense fallback={<>Loading...</>}>
-                            <DataTable initialData={initialDataAave} background="bg-gradient-aave" platform="aave" member={false} iconURL="/assets/images/aave_small.svg" />
+                            {/* <DataTable initialData={initialDataAave} background="bg-gradient-aave" platform="aave" member={false} iconURL="/assets/images/aave_small.svg" /> */}
+                            <OptimismDataTable initialData={initialDataAave} background="bg-gradient-aave" platform="aave" member={false} iconURL="/assets/images/aave_small.svg" />
+
                         </Suspense>
                     </div>
                 )}
                 {isVisible('Compound') && (
                     <div className="custom-scrollbar">
                         <Suspense fallback={<>Loading...</>}>
-                            <DataTable initialData={initialCompoundData} background="bg-compound" platform="compound" member={false} iconURL="/assets/images/compound_small.svg" />
+                            {/* <DataTable initialData={initialCompoundData} background="bg-compound" platform="compound" member={false} iconURL="/assets/images/compound_small.svg" /> */}
+                            <OptimismDataTable initialData={initialCompoundData} background="bg-compound" platform="compound" member={false} iconURL="/assets/images/compound_small.svg" />
                         </Suspense>
                     </div>
                 )}
                 {isVisible('Uniswap') && (
                     <div className="custom-scrollbar">
                         <Suspense fallback={<>Loading...</>}>
-                            <DataTable initialData={initialUniswapData} background="bg-uniswap" platform="uniswap" member={false} iconURL="/assets/images/uniswap_small.svg" />
+                            {/* <DataTable initialData={initialUniswapData} background="bg-uniswap" platform="uniswap" member={false} iconURL="/assets/images/uniswap_small.svg" /> */}
+                            <OptimismDataTable initialData={initialUniswapData} background="bg-uniswap" platform="uniswap" member={false} iconURL="/assets/images/uniswap_small.svg" />
                         </Suspense>
                     </div>
                 )}

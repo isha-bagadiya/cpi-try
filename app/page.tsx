@@ -7,6 +7,7 @@ import HomeHeader from "@/components/home/HomeHeader";
 import Methodology from "@/components/home/Methodology";
 import Resources from "@/components/home/Resources";
 import WhatIsCPI from "@/components/home/WhatIsCPI";
+// import SmoothScrolling from "@/components/layout/SmoothScrolling";
 
 import dynamic from "next/dynamic";
 

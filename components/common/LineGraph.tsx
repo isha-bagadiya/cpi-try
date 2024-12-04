@@ -1,21 +1,12 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-// import { Line } from 'react-chartjs-2';
 import { ChartData, ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { parse, format } from "date-fns";
-import dynamic from "next/dynamic";
 import useSWR from "swr";
 import ChartWrapper from "./ChartWrapper";
-
-// ChartJS.register(TimeScale, LinearScale, PointElement, LineElement, Tooltip, Legend, annotationPlugin);
-
-// const Line = dynamic(
-//     () => import('react-chartjs-2').then(mod => mod.Line),
-//     { ssr: false, loading: () => <div className="h-[400px] animate-pulse bg-gray-100 rounded-lg" /> }
-// );
 
 // Define types for Event and Annotation
 interface Event {
@@ -40,74 +31,73 @@ interface CPIData {
   CPI: string;
 }
 
+interface MovingAverageData {
+  date: string;
+  HHI: string;
+  CPI: string;
+}
+
 //fetcher function to fetch the data on the server only
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
-    const data: CPIData[] = await res.json();
+    const data = await res.json();
     return data;
   });
 
 const LineGraph: React.FC = () => {
-  // const [chartData, setChartData] = useState<CustomChartData | null>(null);
-  const { data: fetchedData, error } = useSWR<CPIData[]>(
+  const { data: dailyData, error: dailyError } = useSWR<CPIData[]>(
     "/home_hhi_cpi.json",
     fetcher
   );
+  
+  const { data: movingAverageData, error: movingAverageError } = useSWR<MovingAverageData[]>(
+    "/average_hhi_cpi.json",
+    fetcher
+  );
+
   const [view, setView] = useState<"daily" | "movingAverage">("daily");
   const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
-
-  // Fetch and process data
-  // useEffect(() => {
-  //     const fetchData = async () => {
-  //         try {
-  //             const response = await fetch('/daily_hhi_cpi.json');
-  //             const data: CPIData[] = await response.json();
-  //             const formattedData = parseJSON(data);
-  //             console.log("formattedData", formattedData)
-
-  //             const lastDate = formattedData.labels[formattedData.labels.length - 1] as Date;
-  //             setLastUpdateDate(lastDate ? format(lastDate, 'dd MMMM yyyy') : 'N/A');
-  //             setChartData(formattedData);
-  //         } catch (error) {
-  //             console.error('Error fetching data:', error);
-  //         }
-  //     };
-
-  //     fetchData();
-  // }, [view]);
-
-  const calculateMovingAverage = useCallback(
-    (data: number[], windowSize: number) => {
-      const result: number[] = [];
-      for (let i = 0; i < data.length; i++) {
-        const window = data.slice(Math.max(0, i - windowSize + 1), i + 1);
-        const average =
-          window.reduce((sum, value) => sum + value, 0) / window.length;
-        result.push(average);
-      }
-      return result;
-    },
-    []
-  );
 
   // Function to parse and process the JSON data
   const chartData = useMemo(() => {
     const labels: Date[] = [];
     const cpiData: number[] = [];
-    const tokenHouseCpiData: number[] = []; // Add an array for "Token house CPI" data
+    const tokenHouseCpiData: number[] = [];
 
-    if (!fetchedData) return null;
+    let data: CPIData[] | MovingAverageData[] | undefined;
+    let dataType: "daily" | "movingAverage" = view;
 
-    fetchedData.forEach((item: CPIData) => {
-      // Update the format from "dd-MM-yyyy" to "MM-dd-yyyy"
+    if (view === "daily" && dailyData) {
+      data = dailyData;
+    } else if (view === "movingAverage" && movingAverageData) {
+      data = movingAverageData;
+      // If moving average data uses different column names
+      dataType = "movingAverage";
+    }
+
+    if (!data) return null;
+
+    data.forEach((item: CPIData | MovingAverageData) => {
+      // Update the format from "MM-dd-yyyy" to parse correctly
       const date = parse(item.date, "MM-dd-yyyy", new Date());
-      const cpi = parseFloat(item.CPI);
-      const tokenHouseCpi = parseFloat(item["HHI"]); // Parse the "Token house CPI" value
+      
+      let cpi: number;
+      let tokenHouseCpi: number;
+
+      if (dataType === "daily") {
+        const dailyItem = item as CPIData;
+        cpi = parseFloat(dailyItem.CPI);
+        tokenHouseCpi = parseFloat(dailyItem.HHI);
+      } else {
+        const maItem = item as MovingAverageData;
+        cpi = parseFloat(maItem.CPI);
+        tokenHouseCpi = parseFloat(maItem.HHI);
+      }
 
       if (date && !isNaN(cpi) && !isNaN(tokenHouseCpi)) {
         labels.push(date);
         cpiData.push(cpi);
-        tokenHouseCpiData.push(tokenHouseCpi); // Store "Token house CPI" data
+        tokenHouseCpiData.push(tokenHouseCpi);
       }
     });
 
@@ -115,10 +105,7 @@ const LineGraph: React.FC = () => {
     const datasets = [
       {
         label: "CPI",
-        data:
-          view === "movingAverage"
-            ? calculateMovingAverage(cpiData, 7)
-            : cpiData,
+        data: cpiData,
         borderColor: "#FF0420",
         fill: false,
         pointRadius: 4,
@@ -129,11 +116,8 @@ const LineGraph: React.FC = () => {
         pointHoverBorderColor: "#fff",
       },
       {
-        label: "Token house CPI", // Add a label for "Token house CPI"
-        data:
-          view === "movingAverage"
-            ? calculateMovingAverage(tokenHouseCpiData, 7)
-            : tokenHouseCpiData, // Add data for "Token house CPI"
+        label: "Token house CPI",
+        data: tokenHouseCpiData,
         borderColor: "#008080",
         fill: false,
         pointRadius: 4,
@@ -251,7 +235,7 @@ const LineGraph: React.FC = () => {
       datasets,
       annotations,
     };
-  }, [fetchedData, view]);
+  }, [dailyData, movingAverageData, view]);
 
   // Define chart options with types
   const options = useMemo<ChartOptions<"line">>(
@@ -302,7 +286,7 @@ const LineGraph: React.FC = () => {
     [chartData]
   );
 
-  if (error) return <div>Error loading data...</div>;
+  if (dailyError || movingAverageError) return <div>Error loading data...</div>;
 
   return (
     <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">

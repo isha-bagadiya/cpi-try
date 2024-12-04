@@ -79,7 +79,7 @@ const CPIChartofDAOs: React.FC = () => {
                         <ChartWrapper data={data} type='bar' options={options} />
                     </div>
                 ) : (
-                    <p>Loading chart...</p>
+                    <p className='text-black'>Loading chart...</p>
                 )}
                 <time
                     dateTime="2024-08-27"
