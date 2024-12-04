@@ -155,32 +155,44 @@ const LineGraph: React.FC = () => {
       },
       {
         name: "RPGF Round 3",
-        startDate: "14-10-2023",
+        startDate: "31-03-2023",
         endDate: "11-01-2024",
         color: "rgba(255,0,0,0.7)",
       },
       {
         name: "RPGF Round 4",
-        startDate: "03-06-2024",
-        endDate: "11-01-2024",
+        startDate: "12-01-2024",
+        endDate: "16-07-2024",
+        color: "rgba(255,0,0,0.7)",
+      },
+      {
+        name: "RPGF Round 5",
+        startDate: "17-07-2024",
+        endDate: "21-10-2024",
+        color: "rgba(255,0,0,0.7)",
+      },
+      {
+        name: "RPGF Round 6",
+        startDate: "22-10-2024",
+        endDate: "00-00-0000",
         color: "rgba(255,0,0,0.7)",
       },
       {
         name: "Season 3",
         startDate: "26-01-2023",
-        endDate: "05-04-2023",
+        endDate: "07-06-2023",
         color: "rgba(128,0,128,0.7)",
       },
       {
         name: "Season 4",
         startDate: "08-06-2023",
-        endDate: "20-09-2023",
+        endDate: "03-01-2024",
         color: "rgba(128,0,128,0.7)",
       },
       {
         name: "Season 5",
         startDate: "04-01-2024",
-        endDate: "00-00-0000",
+        endDate: "26-06-2024",
         color: "rgba(128,0,128,0.7)",
       },
       {
@@ -211,13 +223,23 @@ const LineGraph: React.FC = () => {
         yValue: yPosition,
         content: event.name,
         font: {
-          size: 12,
+          size: 10,
           weight: "bold",
         },
         color: event.color,
         textAlign: "center",
-        xAdjust: isRPGF ? 55 : 40,
+        xAdjust: isRPGF ? 8 : 10,
         yAdjust: isRPGF ? -20 : 20,
+        backgroundColor: "white", // Add white background
+        padding: {
+          top: 4,
+          bottom: 4,
+          left: 6,
+          right: 6,
+        },
+        borderRadius: 4,
+        textOverflow: "clip",
+        wordWrap: "break-word",
       };
     });
 
