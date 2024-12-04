@@ -12,7 +12,6 @@ import Pagination from "./Pagination";
 import { Tooltip } from "react-tooltip";
 import { MdContentCopy } from "react-icons/md";
 
-
 export interface InitialDataProps {
   initialData: DelegateData[];
   member: boolean;
@@ -28,21 +27,10 @@ const OptimismDataTable: React.FC<InitialDataProps> = ({
   platform,
   iconURL,
 }) => {
-  //   const [data, setData] = useState<DelegateData[]>(initialData?.data || []);
   const [page, setPage] = useState<number>(1); // Start from page 1
-  //   const [loading, setLoading] = useState<boolean>(false);
-  //   const [hasMore, setHasMore] = useState<boolean>(true);
-  //   const containerRef = useRef<HTMLDivElement | null>(null);
   const [sort, setSort] = useState<string>("voting_power");
   const [isAsc, setIsAsc] = useState<boolean>(false);
-  //   const [search, setSearch] = useState<string>("");
-  //   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
-  //   const [totalItems, setTotalItems] = useState<number>(
-  //     initialData?.totalItems || 0
-  //   );
-  //   const [totalPages, setTotalPages] = useState<number>(
-  //     initialData?.totalPages || 0
-  //   );
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   const ITEMS_PER_PAGE = 20;
 
@@ -274,13 +262,23 @@ const OptimismDataTable: React.FC<InitialDataProps> = ({
                   onClick={() => {
                     if (item.delegate) {
                       navigator.clipboard.writeText(item.delegate);
-                      alert("Copied to clipboard!"); // Optional feedback to the user
+                      setCopiedIndex(index);
+
+                      // Remove the "Copied!" text after 2 seconds
+                      setTimeout(() => {
+                        setCopiedIndex(null);
+                      }, 800);
                     }
                   }}
-                  className="ml-2 text-black hover:text-blue-700 hover:opacity-100 opacity-50" // Add styling as needed
+                  className="ml-2 text-black hover:opacity-100 opacity-50 relative"
                   title="Copy Delegate Address"
                 >
                   <MdContentCopy />
+                  {copiedIndex === index && (
+                    <span className="absolute top-[-5px] left-[400%] transform -translate-x-1/2 bg-transparent text-blue-700 text-xs px-2 py-1 rounded border border-blue-700">
+                      Copied!
+                    </span>
+                  )}
                 </button>
               </div>
               <Tooltip id="my-tooltip" />
