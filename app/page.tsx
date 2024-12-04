@@ -8,9 +8,6 @@ import Methodology from "@/components/home/Methodology";
 import Resources from "@/components/home/Resources";
 import WhatIsCPI from "@/components/home/WhatIsCPI";
 
-import { Toaster } from 'react-hot-toast';
-
-
 import dynamic from "next/dynamic";
 
 const Panels = dynamic(() => import('@/components/home/Panels'), { ssr: false, loading: () => <div className="h-[500px] animate-pulse bg-gray-100 rounded-lg" /> });
