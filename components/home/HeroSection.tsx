@@ -1,9 +1,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import Button from '@/components/ui/Button';
-import hero2 from "@/public/assets/images/hero2.png";
-import arrow from "@/public/assets/images/pixelarticons_arrow-up.png";
+import hero2 from "@/public/assets/images/hero2.svg";
+import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
 import cb1 from "@/public/assets/images/mask_grp_1.svg";
 import Link from 'next/link';
 
@@ -19,7 +18,7 @@ const HeroSection: React.FC = () => {
                         wer Index
                     </div>
                     <div className='font-mori font-semibold text-4xl md:text-7xl'> in DAOs</div>
-                    <Link className='button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-2xl my-8' href="/explore/optimism">
+                    <Link className='button-50 heroarrowbtn max-w-max justify-center items-center font-redhat font-semibold text-2xl my-8' href="/explore/optimism" target='_blank'>
                         <span className='ml-4 drop-shadow-custom' >Explore Index</span>
                         <Image
                             src={arrow}
@@ -52,7 +51,7 @@ const HeroSection: React.FC = () => {
                     Concentration of
                 </div>
                 <div className=' z-30 flex flex-row items-center text-[#FFFCE1]'>
-                    <Link className='flex flex-row button-50 heroarrowbtn  justify-center items-center font-redhat font-semibold text-2xl mr-8' href="/explore/optimism">
+                    <Link className='flex flex-row button-50 heroarrowbtn  justify-center items-center font-redhat font-semibold text-2xl mr-8' href="/explore/optimism" target='_blank'>
                         <span className='ml-4 drop-shadow-custom' >Explore Index</span>
                         <Image src={arrow} alt='arrow icon' className='border border-white rounded-full bg-[#FF0E00] p-3' width={50} height={50} />
                     </Link>

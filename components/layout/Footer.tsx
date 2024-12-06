@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-import img2 from "@/public/assets/images/white-logo-icon.png";
+import img2 from "@/public/assets/images/white-logo-icon.svg";
 import Image from "next/image";
 import { useGSAP } from "@gsap/react";
 import ContactModal from "../ui/ContactModal";

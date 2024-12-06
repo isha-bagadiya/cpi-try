@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image";
-import img from "@/public/assets/images/plus_icon.png"
+import img from "@/public/assets/images/plus_icon.svg"
 import NewDAOModal from "../ui/NewDAOModal";
 import { useState } from "react";
 import Experience from "../ui/Experiment";

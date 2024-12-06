@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import hero2 from "@/public/assets/images/hero2.png";
+import hero2 from "@/public/assets/images/hero2.svg";
 
 
 

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import arrow from "@/public/assets/images/pixelarticons_arrow-up.png";
+import arrow from "@/public/assets/images/pixelarticons_arrow-up.svg";
 
 interface Resource {
     title: string

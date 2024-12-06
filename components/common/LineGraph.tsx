@@ -3,10 +3,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ChartData, ChartOptions } from "chart.js";
 import "chartjs-adapter-date-fns";
-import annotationPlugin from "chartjs-plugin-annotation";
 import { parse, format } from "date-fns";
 import useSWR from "swr";
 import ChartWrapper from "./ChartWrapper";
+import { useInView } from "react-intersection-observer";
 
 // Define types for Event and Annotation
 interface Event {
@@ -37,6 +37,14 @@ interface MovingAverageData {
   CPI: string;
 }
 
+// Cache interface
+interface ChartCache {
+  data: CustomChartData;
+  timestamp: number;
+  view: "daily" | "movingAverage";
+}
+
+
 //fetcher function to fetch the data on the server only
 const fetcher = (url: string) =>
   fetch(url).then(async (res) => {
@@ -44,22 +52,111 @@ const fetcher = (url: string) =>
     return data;
   });
 
-const LineGraph: React.FC = () => {
-  const { data: dailyData, error: dailyError } = useSWR<CPIData[]>(
-    "/home_hhi_cpi.json",
-    fetcher
-  );
+  // Cache utility functions
+const getCachedChartData = (view: "daily" | "movingAverage"): ChartCache | null => {
+  const cacheKey = `optimism-cpi-chart-${view}`;
+  const cachedItem = localStorage.getItem(cacheKey);
   
-  const { data: movingAverageData, error: movingAverageError } = useSWR<MovingAverageData[]>(
-    "/average_hhi_cpi.json",
+  if (cachedItem) {
+    const parsedCache: ChartCache = JSON.parse(cachedItem);
+    
+    // Check if cache is less than 24 hours old
+    const currentTime = new Date().getTime();
+    const isCacheValid = (currentTime - parsedCache.timestamp) < (24 * 60 * 60 * 1000);
+    
+    return isCacheValid ? parsedCache : null;
+  }
+  
+  return null;
+};
+
+const setCachedChartData = (view: "daily" | "movingAverage", data: CustomChartData) => {
+  const cacheKey = `optimism-cpi-chart-${view}`;
+  const cacheItem: ChartCache = {
+    data,
+    timestamp: new Date().getTime(),
+    view
+  };
+  
+  localStorage.setItem(cacheKey, JSON.stringify(cacheItem));
+};
+
+
+const LineGraph: React.FC = () => {
+  const [view, setView] = useState<"daily" | "movingAverage">("daily");
+  const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
+  const [cachedChartImage, setCachedChartImage] = useState<string | null>(null);
+
+
+  // Add viewport observation
+  const { ref: chartRef, inView } = useInView({
+    triggerOnce: true, // allows re-triggering
+    threshold: 0.5, // trigger when 10% of component is visible
+  });
+
+  const [shouldFetchData, setShouldFetchData] = useState(false);
+
+  // Modify data fetching to be conditional
+  const { data: dailyData, error: dailyError } = useSWR<CPIData[]>(
+    inView && shouldFetchData && view === "daily" ? "/home_hhi_cpi.json" : null,
     fetcher
   );
 
-  const [view, setView] = useState<"daily" | "movingAverage">("daily");
-  const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
+  const { data: movingAverageData, error: movingAverageError } = useSWR<
+    MovingAverageData[]
+  >(
+    inView && shouldFetchData && view === "movingAverage"
+      ? "/average_hhi_cpi.json"
+      : null,
+    fetcher
+  );
+
+  // Modify view change handler to trigger data fetch
+  const handleViewChange = useCallback((newView: "daily" | "movingAverage") => {
+    setView(newView);
+    setShouldFetchData(true);
+  }, []);
+
+  // Effect to reset data fetch trigger when view changes
+  useEffect(() => {
+    if (inView) {
+      setShouldFetchData(true);
+    }
+  }, [inView, view]);
+
+  // Cache chart image
+  const cacheChartImage = useCallback((chartElement: HTMLCanvasElement) => {
+    const cachedImageKey = `optimism-cpi-chart-image-${view}`;
+    
+    // Convert canvas to data URL
+    const imageDataUrl = chartElement.toDataURL('image/png');
+    
+    // Store in localStorage
+    localStorage.setItem(cachedImageKey, imageDataUrl);
+    setCachedChartImage(imageDataUrl);
+  }, [view]);
 
   // Function to parse and process the JSON data
   const chartData = useMemo(() => {
+    // First, check if there's a valid cache
+    const cachedData = getCachedChartData(view);
+    if (cachedData) {
+      // Restore date objects (they get converted to strings when stringified)
+      const restoredLabels = cachedData.data.labels?.map(label => new Date(label as string)) || [];
+      const restoredChartData = {
+        ...cachedData.data,
+        labels: restoredLabels
+      };
+      
+      setLastUpdateDate(restoredLabels.length > 0 
+        ? format(restoredLabels[restoredLabels.length - 1], "dd MMMM yyyy") 
+        : "N/A"
+      );
+      
+      return restoredChartData;
+    }
+
+    // If no cache, generate new chart data
     const labels: Date[] = [];
     const cpiData: number[] = [];
     const tokenHouseCpiData: number[] = [];
@@ -71,7 +168,6 @@ const LineGraph: React.FC = () => {
       data = dailyData;
     } else if (view === "movingAverage" && movingAverageData) {
       data = movingAverageData;
-      // If moving average data uses different column names
       dataType = "movingAverage";
     }
 
@@ -80,7 +176,7 @@ const LineGraph: React.FC = () => {
     data.forEach((item: CPIData | MovingAverageData) => {
       // Update the format from "MM-dd-yyyy" to parse correctly
       const date = parse(item.date, "MM-dd-yyyy", new Date());
-      
+
       let cpi: number;
       let tokenHouseCpi: number;
 
@@ -230,11 +326,16 @@ const LineGraph: React.FC = () => {
     const lastDate = labels[labels.length - 1] || null;
     setLastUpdateDate(lastDate ? format(lastDate, "dd MMMM yyyy") : "N/A");
 
-    return {
+    const processedChartData = {
       labels,
       datasets,
       annotations,
     };
+
+    // Cache the processed data
+    setCachedChartData(view, processedChartData);
+
+    return processedChartData;
   }, [dailyData, movingAverageData, view]);
 
   // Define chart options with types
@@ -278,18 +379,35 @@ const LineGraph: React.FC = () => {
       },
       responsive: true,
       maintainAspectRatio: false,
-      animation: {
-        duration: 2000,
-        easing: "easeOutQuart",
-      },
+      // animation: {
+      //   duration: 2000,
+      //   easing: "easeOutQuart",
+      // },
+      afterRender: (chart: { canvas: HTMLCanvasElement; }) => {
+        if (chart.canvas) {
+          cacheChartImage(chart.canvas);
+        }
+      }
     }),
-    [chartData]
+    [chartData, cacheChartImage]
   );
+
+  // Effect to load cached chart image on component mount
+  useEffect(() => {
+    const cachedImageKey = `optimism-cpi-chart-image-${view}`;
+    const cachedImage = localStorage.getItem(cachedImageKey);
+    if (cachedImage) {
+      setCachedChartImage(cachedImage);
+    }
+  }, [view]);
 
   if (dailyError || movingAverageError) return <div>Error loading data...</div>;
 
   return (
-    <div className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10">
+    <div
+      ref={chartRef}
+      className="container mx-auto flex flex-col items-center justify-center p-3 rounded-lg shadow-md w-full my-10 pb-10"
+    >
       {/* Header Section */}
       <h2 className="font-mori font-semibold text-white text-2.5xl md:text-5xl mb-4 text-center max-w-[80%]">
         Optimism CPI Over Time{" "}
@@ -301,7 +419,7 @@ const LineGraph: React.FC = () => {
         <select
           id="cpi-view-selector"
           className="px-2 py-2 font-mori font-normal text-sm bg-dark-gray rounded-lg"
-          onChange={(e) => setView(e.target.value as "daily" | "movingAverage")}
+          onChange={(e) => handleViewChange(e.target.value as "daily" | "movingAverage")}
           value={view}
           aria-label="Select CPI view"
           aria-live="polite"
@@ -312,11 +430,27 @@ const LineGraph: React.FC = () => {
       </div>
       {/* Chart Rendering */}
       <div className="relative w-full bg-white border border-gray-300 rounded-lg h-[600px] py-8 px-4">
-        {chartData ? (
-          <ChartWrapper data={chartData} type="line" options={options} />
+      {chartData ? (
+          <>
+            {/* Render cached image if available, otherwise render chart */}
+            {cachedChartImage ? (
+              <img 
+                src={cachedChartImage} 
+                alt="Cached Optimism CPI Chart" 
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <ChartWrapper 
+                data={chartData} 
+                type="line" 
+                options={options} 
+              />
+            )}
+          </>
         ) : (
           <p>Loading chart...</p>
         )}
+
         <div className="font-mori font-normal text-xs text-gray-500 text-end pt-4">
           Last updated on:-{" "}
           <span className="text-black ml-1">{lastUpdateDate}</span>

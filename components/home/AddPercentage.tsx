@@ -1,46 +1,8 @@
 "use client";
 import Image from "next/image";
-import bg from "@/public/assets/images/influencebg.png";
+import bg from "@/public/assets/images/influencebg.svg";
 import Link from "next/link";
 import { LuChevronRight } from "react-icons/lu";
-
-interface ProgressRingProps {
-  percentage: number;
-}
-
-const ProgressRing: React.FC<ProgressRingProps> = ({ percentage }) => {
-  const size = 24;
-  const strokeWidth = 3;
-  const radius = size / 2 - strokeWidth / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="mt-1">
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="#FEC5FB"
-        strokeWidth={strokeWidth}
-        opacity={0.3}
-      />
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="#FEC5FB"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        strokeLinecap="round"
-        transform={`rotate(-90 ${size / 2} ${size / 2})`}
-      />
-    </svg>
-  );
-};
 
 const AddPercentage: React.FC = () => {
   return (
@@ -120,7 +82,7 @@ const AddPercentage: React.FC = () => {
           </div>
         </div>
 
-        <Link href="https://optimism.daocpi.com/">
+        <Link href="https://optimism.daocpi.com/" target='_blank'>
           <button
             className="mt-6 flex flex-row button-50 justify-center items-center font-redhat font-semibold text-xl"
             aria-label="add-percentage"
